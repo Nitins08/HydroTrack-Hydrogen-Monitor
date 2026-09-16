@@ -12,18 +12,25 @@ import {
 } from 'recharts';
 import { api } from '../services/api';
 import { formatCurrency } from '../utils/formatters';
+import { Edit2, Trash2, CheckCircle2, AlertCircle } from 'lucide-react';
 import KPICard from '../components/KPICard';
 import AlertPanel from '../components/AlertPanel';
 import ChartContainer from '../components/ChartContainer';
 import ChartTooltip from '../components/ChartTooltip';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
 
-export default function DashboardPage({ refreshTrigger }) {
+export default function DashboardPage({ refreshTrigger, onEditReading, onTriggerRefresh }) {
   const [period, setPeriod] = useState('30d');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Delete state
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   const fetchDashboard = async () => {
     setLoading(true);
@@ -36,6 +43,31 @@ export default function DashboardPage({ refreshTrigger }) {
       setError('Unable to load dashboard data. Please ensure the backend server and MongoDB are active.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleteLoading(true);
+    try {
+      await api.deleteReading(deleteTarget._id);
+      setDeleteTarget(null);
+      setNotification({ type: 'success', message: 'Reading deleted successfully.' });
+      setTimeout(() => setNotification(null), 3000);
+      if (onTriggerRefresh) {
+        onTriggerRefresh();
+      } else {
+        fetchDashboard();
+      }
+    } catch (err) {
+      console.error(err);
+      setNotification({ 
+        type: 'error', 
+        message: err.response?.data?.message || err.message || 'Failed to delete reading.' 
+      });
+      setTimeout(() => setNotification(null), 4000);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -55,7 +87,22 @@ export default function DashboardPage({ refreshTrigger }) {
 
   return (
     <div className="space-y-6">
-      
+      {/* Floating or Inline Notification */}
+      {notification && (
+        <div className={`p-3 border rounded-[2px] flex items-center space-x-2 text-xs ${
+          notification.type === 'success' 
+            ? 'bg-green-50 border-green-200 border-l-4 border-l-green-600 text-green-800' 
+            : 'bg-red-50 border-red-200 border-l-4 border-l-red-600 text-red-800'
+        }`}>
+          {notification.type === 'success' ? (
+            <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+          ) : (
+            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+          )}
+          <span>{notification.message}</span>
+        </div>
+      )}
+
       {/* 1. Alerts Panel */}
       <AlertPanel alerts={alerts} />
 
@@ -181,6 +228,7 @@ export default function DashboardPage({ refreshTrigger }) {
                 <th className="py-2 px-3 text-right">Total Cost</th>
                 <th className="py-2 px-3 text-right">Cost / kg</th>
                 <th className="py-2 px-3 text-right">Renewable %</th>
+                <th className="py-2 px-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5E5E5]">
@@ -201,12 +249,41 @@ export default function DashboardPage({ refreshTrigger }) {
                   <td className={`py-2.5 px-3 text-right ${row.renewableEnergyPct >= 60 ? 'text-[#111111]' : 'text-amber-600 font-medium'}`}>
                     {row.renewableEnergyPct}%
                   </td>
+                  <td className="py-2.5 px-3 text-center">
+                    <div className="flex items-center justify-center space-x-1.5">
+                      <button
+                        onClick={() => onEditReading && onEditReading(row)}
+                        title="Edit reading"
+                        className="inline-flex items-center space-x-1 px-2 py-1 bg-white border border-[#D1D1D1] hover:border-black text-[#111111] rounded-[2px] text-[11px] font-medium transition-colors"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget(row)}
+                        title="Delete reading"
+                        className="inline-flex items-center space-x-1 px-2 py-1 bg-white border border-[#D1D1D1] hover:border-red-600 hover:text-red-600 text-[#5C5C5C] rounded-[2px] text-[11px] font-medium transition-colors"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        <span>Delete</span>
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleConfirmDelete}
+        readingDate={deleteTarget?.date}
+        loading={deleteLoading}
+      />
 
     </div>
   );

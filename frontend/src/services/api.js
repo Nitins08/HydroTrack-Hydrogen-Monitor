@@ -17,6 +17,12 @@ export const api = {
   addReading: (readingData) => 
     client.post('/readings', readingData).then((res) => res.data),
 
+  updateReading: (id, readingData) =>
+    client.put(`/readings/${id}`, readingData).then((res) => res.data),
+
+  deleteReading: (id) =>
+    client.delete(`/readings/${id}`).then((res) => res.data),
+
   // Dashboard
   getDashboard: (period = '30d') => 
     client.get(`/dashboard?period=${period}`).then((res) => res.data),

@@ -25,8 +25,11 @@
     - **Production Efficiency (15 pts)**: System output relative to nameplate target.
   - CO₂ emission trend (kg CO₂/day & kg CO₂/kg H₂).
   - Clean vs. Grid energy composition and environmental rating badge.
-- **Data Management**:
-  - Modal dialog to add simulated daily readings with client- and server-side validation.
+- **Data Management (Full CRUD)**:
+  - Add new simulated daily records with client- and server-side validation.
+  - View historical readings in the Recent Daily Readings table.
+  - Edit existing records with pre-filled values and instant metric recalculation.
+  - Delete records safely via confirmation modal dialog.
   - Duplicate date detection and positive numeric validation.
   - Automatic re-calculation of efficiency, costs, and sustainability scores.
 

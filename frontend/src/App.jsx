@@ -8,25 +8,47 @@ import SustainabilityPage from './pages/SustainabilityPage';
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingReading, setEditingReading] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const handleReadingAdded = () => {
+  const handleTriggerRefresh = () => {
     // Incrementing trigger forces all active pages to refetch metrics immediately
     setRefreshTrigger((prev) => prev + 1);
+  };
+
+  const handleOpenAdd = () => {
+    setEditingReading(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (reading) => {
+    setEditingReading(reading);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingReading(null);
   };
 
   return (
     <Router>
       <div className="min-h-screen bg-[#F5F5F5] text-[#111111] flex flex-col font-sans selection:bg-black selection:text-white">
         {/* Top Navigation */}
-        <Navbar onOpenAddModal={() => setIsModalOpen(true)} />
+        <Navbar onOpenAddModal={handleOpenAdd} />
 
         {/* Main Body */}
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Routes>
             <Route 
               path="/" 
-              element={<DashboardPage refreshTrigger={refreshTrigger} />} 
+              element={
+                <DashboardPage 
+                  refreshTrigger={refreshTrigger} 
+                  onEditReading={handleOpenEdit}
+                  onTriggerRefresh={handleTriggerRefresh}
+                />
+              } 
             />
             <Route 
               path="/analytics" 
@@ -52,11 +74,12 @@ export default function App() {
           </div>
         </footer>
 
-        {/* Add Daily Reading Modal */}
+        {/* Add / Edit Daily Reading Modal */}
         <AddReadingModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onReadingAdded={handleReadingAdded}
+          initialData={editingReading}
+          onClose={handleCloseModal}
+          onReadingAdded={handleTriggerRefresh}
         />
       </div>
     </Router>

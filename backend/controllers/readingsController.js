@@ -143,3 +143,160 @@ export const addReading = async (req, res) => {
     });
   }
 };
+
+// @desc    Update a daily reading by ID
+// @route   PUT /api/readings/:id
+export const updateReading = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      date,
+      hydrogenProduced,
+      hydrogenConsumed,
+      targetProduction,
+      energyConsumed,
+      renewableEnergy,
+      waterConsumed,
+      electricityCost,
+      waterCost,
+      maintenanceCost,
+      co2Emissions
+    } = req.body;
+
+    const reading = await DailyReading.findById(id);
+    if (!reading) {
+      return res.status(404).json({
+        success: false,
+        message: `Reading with ID '${id}' not found.`
+      });
+    }
+
+    // Validate required fields
+    if (
+      !date ||
+      hydrogenProduced === undefined ||
+      hydrogenConsumed === undefined ||
+      targetProduction === undefined ||
+      energyConsumed === undefined ||
+      renewableEnergy === undefined ||
+      waterConsumed === undefined ||
+      electricityCost === undefined ||
+      waterCost === undefined ||
+      maintenanceCost === undefined ||
+      co2Emissions === undefined
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'All daily reading fields are required.'
+      });
+    }
+
+    // Validate non-negative numbers
+    const numericFields = {
+      hydrogenProduced: Number(hydrogenProduced),
+      hydrogenConsumed: Number(hydrogenConsumed),
+      targetProduction: Number(targetProduction),
+      energyConsumed: Number(energyConsumed),
+      renewableEnergy: Number(renewableEnergy),
+      waterConsumed: Number(waterConsumed),
+      electricityCost: Number(electricityCost),
+      waterCost: Number(waterCost),
+      maintenanceCost: Number(maintenanceCost),
+      co2Emissions: Number(co2Emissions)
+    };
+
+    for (const [key, val] of Object.entries(numericFields)) {
+      if (isNaN(val) || val < 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Field '${key}' must be a valid non-negative number.`
+        });
+      }
+    }
+
+    if (numericFields.renewableEnergy > numericFields.energyConsumed) {
+      return res.status(400).json({
+        success: false,
+        message: 'Renewable energy cannot exceed total energy consumed.'
+      });
+    }
+
+    // Date uniqueness check if date is changed
+    const readingDate = new Date(date);
+    readingDate.setUTCHours(0, 0, 0, 0);
+
+    const duplicateCheck = await DailyReading.findOne({
+      _id: { $ne: id },
+      date: {
+        $gte: new Date(readingDate),
+        $lt: new Date(readingDate.getTime() + 24 * 60 * 60 * 1000)
+      }
+    });
+
+    if (duplicateCheck) {
+      return res.status(409).json({
+        success: false,
+        message: `Another daily reading for date ${readingDate.toISOString().slice(0, 10)} already exists.`
+      });
+    }
+
+    // Update fields
+    reading.date = readingDate;
+    Object.assign(reading, numericFields);
+    await reading.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Reading updated successfully.',
+      data: reading
+    });
+  } catch (error) {
+    if (error.kind === 'ObjectId') {
+      return res.status(404).json({
+        success: false,
+        message: `Reading with ID '${req.params.id}' not found.`
+      });
+    }
+    res.status(400).json({
+      success: false,
+      message: 'Could not update daily reading',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Delete a daily reading by ID
+// @route   DELETE /api/readings/:id
+export const deleteReading = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const reading = await DailyReading.findById(id);
+    if (!reading) {
+      return res.status(404).json({
+        success: false,
+        message: `Reading with ID '${id}' not found.`
+      });
+    }
+
+    await DailyReading.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Reading deleted successfully.',
+      data: { id }
+    });
+  } catch (error) {
+    if (error.kind === 'ObjectId') {
+      return res.status(404).json({
+        success: false,
+        message: `Reading with ID '${req.params.id}' not found.`
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: 'Could not delete daily reading',
+      error: error.message
+    });
+  }
+};
