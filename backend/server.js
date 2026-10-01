@@ -8,6 +8,8 @@ import readingsRoutes from './routes/readingsRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import sustainabilityRoutes from './routes/sustainabilityRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -29,19 +31,25 @@ app.get('/', (req, res) => {
     status: 'online',
     version: '1.0.0',
     endpoints: [
+      '/api/auth/signup',
+      '/api/auth/login',
+      '/api/auth/me',
       '/api/readings',
       '/api/dashboard',
       '/api/analytics',
-      '/api/sustainability'
+      '/api/sustainability',
+      '/api/admin/users'
     ]
   });
 });
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/readings', readingsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/sustainability', sustainabilityRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 Handler
 app.use((req, res, next) => {

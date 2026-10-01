@@ -162,7 +162,8 @@ export const getDashboardData = async (req, res) => {
         efficiency: Number(eff.toFixed(1)),
         operationalCost: Math.round(dayCost),
         costPerKg: Number(dayCostPerKg.toFixed(2)),
-        renewableEnergyPct: Number(renPct.toFixed(1))
+        renewableEnergyPct: Number(renPct.toFixed(1)),
+        createdBy: r.createdBy ? r.createdBy.toString() : null
       };
     });
 

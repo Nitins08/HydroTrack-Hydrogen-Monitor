@@ -57,6 +57,11 @@ const dailyReadingSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'CO2 emissions (kg) is required'],
       min: [0, 'CO2 emissions cannot be negative']
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null
     }
   },
   {

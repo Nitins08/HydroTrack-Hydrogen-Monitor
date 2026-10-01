@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import AddReadingModal from './components/AddReadingModal';
 import DashboardPage from './pages/DashboardPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import SustainabilityPage from './pages/SustainabilityPage';
+import AdminPage from './pages/AdminPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,56 +37,83 @@ export default function App() {
   };
 
   return (
-    <Router>
-      <div className="min-h-screen bg-[#F5F5F5] text-[#111111] flex flex-col font-sans selection:bg-black selection:text-white">
-        {/* Top Navigation */}
-        <Navbar onOpenAddModal={handleOpenAdd} />
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-[#F5F5F5] text-[#111111] flex flex-col font-sans selection:bg-black selection:text-white">
+          {/* Top Navigation */}
+          <Navbar onOpenAddModal={handleOpenAdd} />
 
-        {/* Main Body */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Routes>
-            <Route 
-              path="/" 
-              element={
-                <DashboardPage 
-                  refreshTrigger={refreshTrigger} 
-                  onEditReading={handleOpenEdit}
-                  onTriggerRefresh={handleTriggerRefresh}
-                />
-              } 
-            />
-            <Route 
-              path="/analytics" 
-              element={<AnalyticsPage refreshTrigger={refreshTrigger} />} 
-            />
-            <Route 
-              path="/sustainability" 
-              element={<SustainabilityPage refreshTrigger={refreshTrigger} />} 
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
+          {/* Main Body */}
+          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <Routes>
+              {/* Public Authentication Routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
 
-        {/* Footer */}
-        <footer className="border-t border-[#D1D1D1] bg-white py-4 text-center text-xs text-[#5C5C5C]">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div>
-              HydroTrack • Hydrogen Production, Cost & Sustainability Monitoring System
+              {/* Protected Application Routes */}
+              <Route 
+                path="/" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardPage 
+                      refreshTrigger={refreshTrigger} 
+                      onEditReading={handleOpenEdit}
+                      onTriggerRefresh={handleTriggerRefresh}
+                    />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/analytics" 
+                element={
+                  <ProtectedRoute>
+                    <AnalyticsPage refreshTrigger={refreshTrigger} />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/sustainability" 
+                element={
+                  <ProtectedRoute>
+                    <SustainabilityPage refreshTrigger={refreshTrigger} />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminPage />
+                  </ProtectedRoute>
+                } 
+              />
+
+              {/* Catch-all */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+
+          {/* Footer */}
+          <footer className="border-t border-[#D1D1D1] bg-white py-4 text-center text-xs text-[#5C5C5C]">
+            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+              <div>
+                HydroTrack • Hydrogen Production, Cost & Sustainability Monitoring System
+              </div>
+              <div>
+                MERN Stack: MongoDB + Express.js + React.js + Node.js
+              </div>
             </div>
-            <div>
-              MERN Stack: MongoDB + Express.js + React.js + Node.js
-            </div>
-          </div>
-        </footer>
+          </footer>
 
-        {/* Add / Edit Daily Reading Modal */}
-        <AddReadingModal
-          isOpen={isModalOpen}
-          initialData={editingReading}
-          onClose={handleCloseModal}
-          onReadingAdded={handleTriggerRefresh}
-        />
-      </div>
-    </Router>
+          {/* Add / Edit Daily Reading Modal */}
+          <AddReadingModal
+            isOpen={isModalOpen}
+            initialData={editingReading}
+            onClose={handleCloseModal}
+            onReadingAdded={handleTriggerRefresh}
+          />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }

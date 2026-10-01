@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';
 import DailyReading from '../models/DailyReading.js';
+import User from '../models/User.js';
 
 dotenv.config();
 
@@ -79,18 +81,58 @@ const seedDatabase = async () => {
     await mongoose.connect(MONGO_URI);
     console.log('[Seed Script]: Connected successfully.');
 
+    // Seed Demo Admin Account
+    console.log('[Seed Script]: Upserting demo admin user (admin@hydrotrack.com)...');
+    const salt = await bcrypt.genSalt(10);
+    const adminHashedPassword = await bcrypt.hash('Admin@123', salt);
+
+    const adminUser = await User.findOneAndUpdate(
+      { email: 'admin@hydrotrack.com' },
+      {
+        name: 'System Admin',
+        email: 'admin@hydrotrack.com',
+        password: adminHashedPassword,
+        role: 'admin'
+      },
+      { upsert: true, new: true }
+    );
+    console.log('[Seed Script]: Demo admin user ready (admin@hydrotrack.com).');
+
+    // Seed Demo Operator Account
+    console.log('[Seed Script]: Upserting demo operator user (operator@hydrotrack.com)...');
+    const operatorHashedPassword = await bcrypt.hash('Operator@123', salt);
+
+    const operatorUser = await User.findOneAndUpdate(
+      { email: 'operator@hydrotrack.com' },
+      {
+        name: 'Plant Operator',
+        email: 'operator@hydrotrack.com',
+        password: operatorHashedPassword,
+        role: 'operator'
+      },
+      { upsert: true, new: true }
+    );
+    console.log('[Seed Script]: Demo operator user ready (operator@hydrotrack.com).');
+
     // Clear existing readings to ensure clean deterministic demo dataset
     console.log('[Seed Script]: Clearing old dailyreadings records...');
     await DailyReading.deleteMany({});
 
-    // Generate 30 days of data
-    const sampleReadings = generateSeedData(30);
+    // Generate 30 days of data and assign createdBy
+    const sampleReadings = generateSeedData(30).map((r, idx) => ({
+      ...r,
+      // Assign the most recent reading to operatorUser so operator has a reading to edit in demo
+      createdBy: idx === 29 ? operatorUser._id : adminUser._id
+    }));
+
     console.log(`[Seed Script]: Inserting ${sampleReadings.length} realistic daily readings...`);
     await DailyReading.insertMany(sampleReadings);
 
     console.log('----------------------------------------------------');
-    console.log(' [SUCCESS]: 30 Days of realistic sample data seeded!');
-    console.log(' Database: hydrotrack | Collection: dailyreadings');
+    console.log(' [SUCCESS]: Demo Accounts & 30 Days of sample data seeded!');
+    console.log(' Admin Login:    admin@hydrotrack.com    | Password: Admin@123');
+    console.log(' Operator Login: operator@hydrotrack.com | Password: Operator@123');
+    console.log(' Database: hydrotrack');
     console.log('----------------------------------------------------');
 
     process.exit(0);

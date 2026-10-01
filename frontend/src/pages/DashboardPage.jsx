@@ -20,8 +20,13 @@ import ChartTooltip from '../components/ChartTooltip';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
+import { useAuth } from '../context/AuthContext';
 
 export default function DashboardPage({ refreshTrigger, onEditReading, onTriggerRefresh }) {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+  const currentUserId = user?._id || user?.id;
+
   const [period, setPeriod] = useState('30d');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -251,22 +256,34 @@ export default function DashboardPage({ refreshTrigger, onEditReading, onTrigger
                   </td>
                   <td className="py-2.5 px-3 text-center">
                     <div className="flex items-center justify-center space-x-1.5">
-                      <button
-                        onClick={() => onEditReading && onEditReading(row)}
-                        title="Edit reading"
-                        className="inline-flex items-center space-x-1 px-2 py-1 bg-white border border-[#D1D1D1] hover:border-black text-[#111111] rounded-[2px] text-[11px] font-medium transition-colors"
-                      >
-                        <Edit2 className="w-3 h-3" />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={() => setDeleteTarget(row)}
-                        title="Delete reading"
-                        className="inline-flex items-center space-x-1 px-2 py-1 bg-white border border-[#D1D1D1] hover:border-red-600 hover:text-red-600 text-[#5C5C5C] rounded-[2px] text-[11px] font-medium transition-colors"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        <span>Delete</span>
-                      </button>
+                      {/* Edit Button: Visible to Admin, or to Operator if created by this operator */}
+                      {(isAdmin || (row.createdBy && currentUserId && row.createdBy === currentUserId)) ? (
+                        <button
+                          onClick={() => onEditReading && onEditReading(row)}
+                          title="Edit reading"
+                          className="inline-flex items-center space-x-1 px-2 py-1 bg-white border border-[#D1D1D1] hover:border-black text-[#111111] rounded-[2px] text-[11px] font-medium transition-colors"
+                        >
+                          <Edit2 className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                      ) : null}
+
+                      {/* Delete Button: Visible ONLY to Admin */}
+                      {isAdmin ? (
+                        <button
+                          onClick={() => setDeleteTarget(row)}
+                          title="Delete reading"
+                          className="inline-flex items-center space-x-1 px-2 py-1 bg-white border border-[#D1D1D1] hover:border-red-600 hover:text-red-600 text-[#5C5C5C] rounded-[2px] text-[11px] font-medium transition-colors"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Delete</span>
+                        </button>
+                      ) : null}
+
+                      {/* If user is an operator and cannot edit or delete this reading */}
+                      {(!isAdmin && (!row.createdBy || !currentUserId || row.createdBy !== currentUserId)) && (
+                        <span className="text-[11px] text-[#8C8C8C] italic">View only</span>
+                      )}
                     </div>
                   </td>
                 </tr>

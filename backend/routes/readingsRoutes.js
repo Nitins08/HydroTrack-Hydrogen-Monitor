@@ -5,15 +5,16 @@ import {
   updateReading, 
   deleteReading 
 } from '../controllers/readingsController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.route('/')
-  .get(getReadings)
-  .post(addReading);
+  .get(protect, getReadings)
+  .post(protect, addReading);
 
 router.route('/:id')
-  .put(updateReading)
-  .delete(deleteReading);
+  .put(protect, updateReading)
+  .delete(protect, deleteReading);
 
 export default router;

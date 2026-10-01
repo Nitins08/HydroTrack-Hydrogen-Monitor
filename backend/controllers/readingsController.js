@@ -127,7 +127,8 @@ export const addReading = async (req, res) => {
 
     const newReading = await DailyReading.create({
       date: readingDate,
-      ...numericFields
+      ...numericFields,
+      createdBy: req.user ? req.user._id : null
     });
 
     res.status(201).json({
@@ -169,6 +170,16 @@ export const updateReading = async (req, res) => {
         success: false,
         message: `Reading with ID '${id}' not found.`
       });
+    }
+
+    // Permission check: Admins can update any reading; Operators can only update readings they created
+    if (req.user && req.user.role !== 'admin') {
+      if (!reading.createdBy || reading.createdBy.toString() !== req.user._id.toString()) {
+        return res.status(403).json({
+          success: false,
+          message: 'Forbidden: Operators can only edit readings they created.'
+        });
+      }
     }
 
     // Validate required fields
@@ -270,6 +281,14 @@ export const updateReading = async (req, res) => {
 export const deleteReading = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Permission check: Only administrators can delete readings
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: Only administrators can delete readings.'
+      });
+    }
 
     const reading = await DailyReading.findById(id);
     if (!reading) {
