@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import AddReadingModal from './components/AddReadingModal';
@@ -38,10 +39,11 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-[#F5F5F5] text-[#111111] flex flex-col font-sans selection:bg-black selection:text-white">
-          {/* Top Navigation */}
-          <Navbar onOpenAddModal={handleOpenAdd} />
+      <ToastProvider>
+        <Router>
+          <div className="min-h-screen bg-[#F8FAFC] text-gray-900 flex flex-col font-sans selection:bg-teal-600 selection:text-white">
+            {/* Top Navigation */}
+            <Navbar onOpenAddModal={handleOpenAdd} />
 
           {/* Main Body */}
           <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -114,6 +116,7 @@ export default function App() {
           />
         </div>
       </Router>
+      </ToastProvider>
     </AuthProvider>
   );
 }

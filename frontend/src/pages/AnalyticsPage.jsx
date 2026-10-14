@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { 
   ResponsiveContainer, 
   ComposedChart, 
@@ -12,17 +13,32 @@ import {
 } from 'recharts';
 import { api } from '../services/api';
 import { formatCurrency } from '../utils/formatters';
+import { 
+  Zap, 
+  Gauge, 
+  TrendingUp, 
+  Droplet, 
+  IndianRupee, 
+  ChevronDown, 
+  ChevronUp, 
+  HelpCircle,
+  CheckCircle2,
+  AlertCircle
+} from 'lucide-react';
 import KPICard from '../components/KPICard';
 import ChartContainer from '../components/ChartContainer';
 import ChartTooltip from '../components/ChartTooltip';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
+import { pageVariants, staggerContainer, cardVariants } from '../utils/animations';
 
 export default function AnalyticsPage({ refreshTrigger }) {
+  const shouldReduceMotion = useReducedMotion();
   const [period, setPeriod] = useState('30d');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   const fetchAnalytics = async () => {
     setLoading(true);
@@ -32,7 +48,7 @@ export default function AnalyticsPage({ refreshTrigger }) {
       setData(res);
     } catch (err) {
       console.error(err);
-      setError('Failed to fetch analytics data.');
+      setError('Failed to fetch analytics data from server.');
     } finally {
       setLoading(false);
     }
@@ -43,127 +59,164 @@ export default function AnalyticsPage({ refreshTrigger }) {
   }, [period, refreshTrigger]);
 
   if (loading && !data) {
-    return <LoadingState message="Loading analytics data..." />;
+    return <LoadingState message="Aggregating production & economic analytics..." />;
   }
 
-  if (error) {
+  if (error && !data) {
     return <ErrorState message={error} onRetry={fetchAnalytics} />;
   }
 
   const { summary = {}, targetVsActualChart = [], formulas = [], costBreakdown = [] } = data || {};
 
+  const efficiencyVal = summary.productionEfficiency ?? 0;
+  const isEfficiencyOptimal = efficiencyVal >= 90;
+
   return (
-    <div className="space-y-6">
-      
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      className="space-y-6"
+    >
       {/* 1. Header & Summary Grid */}
       <div>
-        <div className="flex items-center justify-between mb-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
           <div>
-            <h2 className="text-sm font-semibold text-[#111111]">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
               Production & Energy Analytics
-            </h2>
-            <p className="text-xs text-[#5C5C5C] mt-0.5">
-              Production yield, energy consumption, and operating cost metrics
+            </h1>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Production yield, specific energy consumption, and operating unit economics
             </p>
           </div>
-          <span className="text-xs text-[#5C5C5C] border border-[#D1D1D1] px-2.5 py-0.5 rounded-[2px]">
-            Period: {period.toUpperCase()}
+          <span className="text-xs text-gray-600 bg-white border border-gray-200 px-3 py-1 rounded-[2px] font-mono self-start sm:self-auto shadow-2xs">
+            Cycle: <strong className="text-teal-700">{period.toUpperCase()}</strong> ({summary.daysCount || 0} Days)
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* 5 KPI Metric Cards */}
+        <motion.div 
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"
+        >
           {/* Total Produced */}
           <KPICard
-            title="Total Hydrogen Produced"
+            title="Total H₂ Produced"
             value={summary.totalHydrogenProduced ?? 0}
             unit="kg"
-            subText={`Period sum (${summary.daysCount} days)`}
+            subText={`Cum. volume (${summary.daysCount || 30} days)`}
             status="normal"
+            icon={TrendingUp}
+            decimals={0}
           />
 
           {/* Average Daily Production */}
           <KPICard
-            title="Avg Daily Production"
+            title="Avg Daily Output"
             value={summary.averageDailyProduction ?? 0}
             unit="kg/day"
-            subText="Target: 1,350 kg/day"
+            subText="Rated benchmark: 1,350 kg/day"
             status="normal"
+            icon={Gauge}
+            decimals={1}
+            trend={{
+              direction: (summary.averageDailyProduction ?? 0) >= 1250 ? 'up' : 'neutral',
+              label: `${Math.round(((summary.averageDailyProduction ?? 0) / 1350) * 100)}% load`,
+              isPositive: true
+            }}
           />
 
           {/* Production Efficiency */}
           <KPICard
             title="Production Efficiency"
-            value={`${summary.productionEfficiency ?? 0}%`}
+            value={`${efficiencyVal}%`}
             unit=""
-            subText="Actual vs Target output"
-            status={(summary.productionEfficiency ?? 100) >= 90 ? 'normal' : 'warning'}
+            subText="Actual vs Target ratio"
+            status={isEfficiencyOptimal ? 'normal' : 'warning'}
+            icon={Gauge}
+            decimals={1}
+            trend={{
+              direction: isEfficiencyOptimal ? 'up' : 'down',
+              label: isEfficiencyOptimal ? 'Pass (≥90%)' : 'Derated (<90%)',
+              isPositive: isEfficiencyOptimal
+            }}
           />
 
           {/* Total Energy Consumed */}
           <KPICard
-            title="Total Energy Consumed"
+            title="Total Energy Input"
             value={summary.totalEnergyConsumed ?? 0}
             unit="MWh"
-            subText="Electrolyzer power input"
+            subText="Stack power input"
             status="normal"
+            icon={Zap}
+            decimals={1}
           />
 
-          {/* Energy Efficiency */}
+          {/* Specific Energy Efficiency */}
           <KPICard
             title="Energy Efficiency"
             value={summary.energyEfficiency ?? 0}
             unit="kg/MWh"
-            subText={`Cost: ₹${summary.costPerKg ?? 0}/kg`}
+            subText={`Unit Cost: ₹${summary.costPerKg ?? 0}/kg`}
             status="normal"
+            icon={IndianRupee}
+            decimals={1}
           />
-        </div>
+        </motion.div>
       </div>
 
       {/* 2. Target Production vs Actual Production Chart */}
       <ChartContainer
         title="Target vs Actual Production"
-        description="Daily hydrogen output compared against target baseline (kg/day)"
+        description="Daily green hydrogen output (kg/day) benchmarked against plant capacity baseline"
         period={period}
         onPeriodChange={setPeriod}
       >
         <div className="h-72 w-full mt-2">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={targetVsActualChart} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="2 2" stroke="#E5E5E5" vertical={false} />
+              <CartesianGrid strokeDasharray="2 2" stroke="#F1F5F9" vertical={false} />
               <XAxis 
                 dataKey="date" 
-                stroke="#5C5C5C" 
-                tick={{ fill: '#5C5C5C', fontSize: 11 }} 
+                stroke="#64748B" 
+                tick={{ fill: '#64748B', fontSize: 11 }} 
                 tickLine={false}
               />
               <YAxis 
-                stroke="#5C5C5C" 
+                stroke="#64748B" 
                 domain={['auto', 'auto']} 
-                tick={{ fill: '#5C5C5C', fontSize: 11 }} 
+                tick={{ fill: '#64748B', fontSize: 11 }} 
                 tickLine={false}
               />
               <Tooltip 
                 isAnimationActive={false}
                 animationDuration={0}
                 animationEasing="linear"
-                cursor={{ fill: '#F5F5F5', opacity: 0.8 }}
-                content={<ChartTooltip />}
+                cursor={{ fill: '#F8FAFC', opacity: 0.9 }}
+                content={<ChartTooltip unit="kg" />}
               />
               <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
               <Bar 
                 dataKey="actualProduction" 
                 name="Actual Production (kg)" 
-                fill="#16a34a" 
+                fill="#0d9488" 
+                isAnimationActive={!shouldReduceMotion}
+                animationDuration={800}
                 radius={[0, 0, 0, 0]} 
-                maxBarSize={36}
+                maxBarSize={34}
               />
               <Line 
                 type="monotone" 
                 dataKey="targetProduction" 
-                name="Target Benchmark (kg)" 
-                stroke="#111111" 
+                name="Target Benchmark (1,350 kg/day)" 
+                stroke="#111827" 
+                isAnimationActive={!shouldReduceMotion}
+                animationDuration={900}
                 strokeWidth={1.5} 
-                strokeDasharray="3 3" 
+                strokeDasharray="4 4" 
                 dot={false}
               />
             </ComposedChart>
@@ -171,68 +224,198 @@ export default function AnalyticsPage({ refreshTrigger }) {
         </div>
       </ChartContainer>
 
-      {/* 3. Cost Breakdown & Calculations */}
+      {/* 3. Production Efficiency Progress Indicator & Cost Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 bg-white border border-[#D1D1D1] rounded-[2px] p-4 sm:p-5 space-y-3">
-          <h3 className="text-sm font-semibold text-[#111111]">
-            Operational Cost Breakdown
-          </h3>
-          <p className="text-xs text-[#5C5C5C]">
-            Total cost: <strong className="text-[#111111]">{formatCurrency(summary.totalOperationalCost ?? 0)}</strong>
-          </p>
+        
+        {/* Left Card: Production Efficiency Gauge & Benchmark */}
+        <motion.div 
+          variants={cardVariants}
+          className="bg-white border border-gray-200 rounded-[3px] p-4 sm:p-5 space-y-4 hover:border-gray-300 transition-colors shadow-2xs"
+        >
+          <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
+            <div>
+              <h3 className="text-sm font-bold text-gray-900">Efficiency Index</h3>
+              <p className="text-xs text-gray-500 mt-0.5">Electrolyzer yield against target</p>
+            </div>
+            <span className={`inline-flex items-center space-x-1 px-2 py-0.5 text-[10px] font-bold uppercase font-mono rounded-[2px] border ${
+              isEfficiencyOptimal
+                ? 'bg-teal-50 text-teal-800 border-teal-200'
+                : 'bg-amber-50 text-amber-800 border-amber-200'
+            }`}>
+              {isEfficiencyOptimal ? <CheckCircle2 className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+              <span>{isEfficiencyOptimal ? 'Nominal' : 'Warning'}</span>
+            </span>
+          </div>
 
-          <div className="space-y-3 pt-2">
-            {costBreakdown.map((item) => (
-              <div key={item.name} className="space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-[#5C5C5C]">{item.name}</span>
-                  <span className="text-[#111111] font-medium">
-                    {formatCurrency(item.amount)} ({item.percentage}%)
-                  </span>
+          {/* Efficiency Progress Indicator Bar */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-baseline">
+              <span className="text-xs text-gray-600 font-medium">Plant Output Efficiency</span>
+              <span className="text-xl font-bold font-mono text-gray-900">{efficiencyVal}%</span>
+            </div>
+
+            {/* Visual multi-segmented bar with target mark */}
+            <div className="relative w-full bg-gray-100 h-3 rounded-[2px] overflow-hidden border border-gray-200">
+              <motion.div
+                initial={shouldReduceMotion ? { width: `${efficiencyVal}%` } : { width: 0 }}
+                animate={{ width: `${Math.min(efficiencyVal, 100)}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className={`h-full ${
+                  isEfficiencyOptimal ? 'bg-teal-600' : 'bg-amber-500'
+                }`}
+              />
+              {/* 90% benchmark indicator line */}
+              <div 
+                className="absolute top-0 bottom-0 w-[2px] bg-red-600 z-10" 
+                style={{ left: '90%' }}
+                title="Minimum warning threshold (90%)"
+              />
+            </div>
+
+            <div className="flex justify-between text-[11px] text-gray-400 font-mono">
+              <span>0%</span>
+              <span className="text-red-600 font-semibold">90% Threshold</span>
+              <span>100% Target</span>
+            </div>
+          </div>
+
+          {/* Context note */}
+          <div className="p-3 bg-gray-50 border border-gray-200 rounded-[2px] text-xs space-y-1.5 text-gray-600">
+            <div className="font-semibold text-gray-900 flex items-center space-x-1.5">
+              <span>Operational Guideline:</span>
+            </div>
+            <p className="text-[11px] leading-relaxed">
+              Target nameplate capacity is calibrated to 1,350 kg/day. Operating below 90% triggers automated alerts for electrolyzer cell stack maintenance.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Right Cards: Operational Cost Breakdown (Stacked & Items) */}
+        <motion.div 
+          variants={cardVariants}
+          className="lg:col-span-2 bg-white border border-gray-200 rounded-[3px] p-4 sm:p-5 space-y-4 hover:border-gray-300 transition-colors shadow-2xs"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2.5 border-b border-gray-100 gap-2">
+            <div>
+              <h3 className="text-sm font-bold text-gray-900">Operational Cost Breakdown</h3>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Total operating expenditure: <strong className="text-gray-900 font-mono">{formatCurrency(summary.totalOperationalCost ?? 0)}</strong>
+              </p>
+            </div>
+            <div className="text-xs font-mono bg-teal-50 text-teal-800 border border-teal-200 px-2.5 py-1 rounded-[2px] self-start sm:self-auto font-semibold">
+              Avg Cost: ₹{summary.costPerKg ?? 0} / kg H₂
+            </div>
+          </div>
+
+          {/* Unified multi-color breakdown bar */}
+          <div className="w-full h-3 rounded-[2px] overflow-hidden flex border border-gray-200">
+            {costBreakdown.map((item, index) => {
+              const colors = ['bg-teal-600', 'bg-slate-700', 'bg-amber-500'];
+              return (
+                <div
+                  key={item.name}
+                  className={`${colors[index % colors.length]} h-full transition-all`}
+                  style={{ width: `${item.percentage}%` }}
+                  title={`${item.name}: ${item.percentage}%`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Individual cost items */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            {costBreakdown.map((item, index) => {
+              const borderColors = ['border-l-teal-600', 'border-l-slate-700', 'border-l-amber-500'];
+              const dotColors = ['bg-teal-600', 'bg-slate-700', 'bg-amber-500'];
+
+              return (
+                <div 
+                  key={item.name} 
+                  className={`p-3 bg-gray-50 border border-gray-200 border-l-[3px] ${borderColors[index % borderColors.length]} rounded-[2px] space-y-1`}
+                >
+                  <div className="flex items-center space-x-1.5 text-xs text-gray-600">
+                    <span className={`w-2 h-2 rounded-[1px] ${dotColors[index % dotColors.length]}`} />
+                    <span className="font-semibold text-gray-900">{item.name}</span>
+                  </div>
+                  <div className="text-sm font-bold text-gray-900 font-mono">
+                    {formatCurrency(item.amount)}
+                  </div>
+                  <div className="text-[11px] text-gray-500 font-mono">
+                    {item.percentage}% of total OPEX
+                  </div>
                 </div>
-                <div className="w-full bg-[#F5F5F5] h-1.5 border border-[#D1D1D1]">
-                  <div 
-                    className="h-full bg-[#111111]" 
-                    style={{ width: `${item.percentage}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          <div className="mt-4 pt-3 border-t border-[#E5E5E5] text-xs text-[#5C5C5C] flex justify-between">
-            <span>Average cost per kg:</span>
-            <strong className="text-[#111111]">₹{summary.costPerKg ?? 0} / kg H₂</strong>
+          <div className="pt-2 text-[11px] text-gray-400 font-mono flex items-center justify-between border-t border-gray-100">
+            <span>Electricity tariff: ~₹1,850/MWh</span>
+            <span>Water purification: ~₹0.55/L</span>
           </div>
-        </div>
-
-        {/* 4. Calculation Methodology */}
-        <div className="lg:col-span-2 bg-white border border-[#D1D1D1] rounded-[2px] p-4 sm:p-5 space-y-3">
-          <div className="pb-2 border-b border-[#E5E5E5]">
-            <h3 className="text-sm font-semibold text-[#111111]">Calculation Methodology</h3>
-            <p className="text-xs text-[#5C5C5C] mt-0.5">Formulas used for plant performance and unit cost metrics</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {formulas.map((item, idx) => (
-              <div key={idx} className="p-3 bg-[#F9F9F9] border border-[#D1D1D1] rounded-[2px] space-y-1.5">
-                <span className="text-xs font-semibold text-[#111111]">{item.name}</span>
-                <div className="bg-white px-2 py-1 border border-[#D1D1D1] font-mono text-[11px] text-[#111111]">
-                  {item.formula}
-                </div>
-                <p className="text-[11px] text-[#5C5C5C] leading-relaxed">
-                  {item.explanation}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="pt-2 text-[11px] text-[#5C5C5C]">
-            Note: All calculations are derived deterministically from daily readings recorded in the database.
-          </div>
-        </div>
+        </motion.div>
       </div>
 
-    </div>
+      {/* 4. Expandable "How Calculations Work" Section */}
+      <motion.div 
+        variants={cardVariants}
+        className="bg-white border border-gray-200 rounded-[3px] overflow-hidden shadow-2xs"
+      >
+        <button
+          type="button"
+          onClick={() => setShowHowItWorks(!showHowItWorks)}
+          className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center space-x-2.5">
+            <div className="w-7 h-7 rounded-[2px] bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-700">
+              <HelpCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-gray-900">How Calculations Work</h3>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Deterministic mathematical formulas for plant efficiency and unit costs
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2 text-xs font-semibold text-gray-600">
+            <span>{showHowItWorks ? 'Collapse' : 'Expand Details'}</span>
+            {showHowItWorks ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </div>
+        </button>
+
+        <AnimatePresence>
+          {showHowItWorks && (
+            <motion.div
+              initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, height: 0 }}
+              animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, height: 'auto' }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+              transition={{ duration: 0.22 }}
+              className="border-t border-gray-100 p-4 sm:p-5 bg-gray-50/50 space-y-4"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {formulas.map((item, idx) => (
+                  <div key={idx} className="p-3.5 bg-white border border-gray-200 rounded-[2px] space-y-2 shadow-2xs">
+                    <span className="text-xs font-bold text-gray-900 block">{item.name}</span>
+                    <div className="bg-gray-50 px-2.5 py-1.5 border border-gray-200 font-mono text-[11px] text-teal-800 rounded-[2px]">
+                      {item.formula}
+                    </div>
+                    <p className="text-[11px] text-gray-600 leading-relaxed">
+                      {item.explanation}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-3 bg-teal-50 border border-teal-200 text-teal-900 text-xs rounded-[2px] flex items-center space-x-2 font-medium">
+                <CheckCircle2 className="w-4 h-4 text-teal-700 flex-shrink-0" />
+                <span>
+                  All metrics in this simulation are computed strictly without third-party black-box algorithms, ensuring full reproducibility for academic evaluation.
+                </span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+    </motion.div>
   );
 }

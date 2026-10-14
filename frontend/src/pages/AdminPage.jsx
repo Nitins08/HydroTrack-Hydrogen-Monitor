@@ -1,21 +1,37 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { formatDate } from '../utils/formatters';
 import { 
   Users, 
   ShieldCheck, 
   HardHat, 
   Trash2, 
-  CheckCircle2, 
-  AlertCircle,
-  Loader2
+  Loader2,
+  X,
+  AlertTriangle,
+  Lock,
+  UserCheck
 } from 'lucide-react';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
+import AnimatedCounter from '../components/AnimatedCounter';
+import { 
+  pageVariants, 
+  staggerContainer, 
+  cardVariants, 
+  tableRowVariants, 
+  modalOverlayVariants, 
+  modalContentVariants 
+} from '../utils/animations';
 
 export default function AdminPage() {
   const { user: currentUser } = useAuth();
+  const { showToast } = useToast();
+  const shouldReduceMotion = useReducedMotion();
+
   const [users, setUsers] = useState([]);
   const [metrics, setMetrics] = useState({ totalUsers: 0, totalAdmins: 0, totalOperators: 0 });
   const [loading, setLoading] = useState(true);
@@ -25,7 +41,6 @@ export default function AdminPage() {
   const [roleUpdatingId, setRoleUpdatingId] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -58,21 +73,12 @@ export default function AdminPage() {
     try {
       const res = await api.adminUpdateUserRole(targetUser._id, newRole);
       if (res.success) {
-        setNotification({
-          type: 'success',
-          message: `Role for ${targetUser.name} updated to ${newRole}.`
-        });
-        setTimeout(() => setNotification(null), 3000);
-        // Refresh users list
+        showToast(`Role for ${targetUser.name} updated to ${newRole.toUpperCase()}.`, 'success');
         fetchUsers();
       }
     } catch (err) {
       console.error(err);
-      setNotification({
-        type: 'error',
-        message: err.response?.data?.message || 'Failed to update user role.'
-      });
-      setTimeout(() => setNotification(null), 4000);
+      showToast(err.response?.data?.message || 'Failed to update user role.', 'error');
     } finally {
       setRoleUpdatingId(null);
     }
@@ -84,28 +90,20 @@ export default function AdminPage() {
     try {
       const res = await api.adminDeleteUser(deleteTarget._id);
       if (res.success) {
-        setNotification({
-          type: 'success',
-          message: `Account for ${deleteTarget.name} was permanently removed.`
-        });
+        showToast(`Account for ${deleteTarget.name} was permanently removed.`, 'success');
         setDeleteTarget(null);
-        setTimeout(() => setNotification(null), 3000);
         fetchUsers();
       }
     } catch (err) {
       console.error(err);
-      setNotification({
-        type: 'error',
-        message: err.response?.data?.message || 'Failed to delete user account.'
-      });
-      setTimeout(() => setNotification(null), 4000);
+      showToast(err.response?.data?.message || 'Failed to delete user account.', 'error');
     } finally {
       setDeleteLoading(false);
     }
   };
 
   if (loading && users.length === 0) {
-    return <LoadingState message="Loading administrative records..." />;
+    return <LoadingState message="Loading administrative user directory..." />;
   }
 
   if (error && users.length === 0) {
@@ -115,102 +113,144 @@ export default function AdminPage() {
   const currentUserId = currentUser?._id || currentUser?.id;
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      className="space-y-6"
+    >
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-[#D1D1D1] gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-200 gap-3">
         <div>
-          <h1 className="text-xl font-bold text-[#111111] tracking-tight">Admin Panel</h1>
-          <p className="text-xs text-[#5C5C5C] mt-0.5">
-            System User Management & Role-Based Access Control
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+            Admin Panel
+          </h1>
+          <p className="text-xs text-gray-500 mt-0.5">
+            System User Management & Role-Based Access Control (RBAC)
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-white border border-[#D1D1D1] text-[#111111] text-xs font-mono rounded-[2px]">
-            <ShieldCheck className="w-3.5 h-3.5 text-black" />
-            <span>Admin Active: {currentUser?.name}</span>
+          <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-white border border-gray-200 text-gray-800 text-xs font-mono rounded-[2px] shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+            <span>Active Admin: {currentUser?.name}</span>
           </span>
         </div>
       </div>
 
-      {/* Notification Banner */}
-      {notification && (
-        <div className={`p-3 border rounded-[2px] flex items-center space-x-2 text-xs ${
-          notification.type === 'success' 
-            ? 'bg-green-50 border-green-200 border-l-4 border-l-green-600 text-green-800' 
-            : 'bg-red-50 border-red-200 border-l-4 border-l-red-600 text-red-800'
-        }`}>
-          {notification.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-          ) : (
-            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
-          )}
-          <span>{notification.message}</span>
-        </div>
-      )}
-
-      {/* 3 Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* 3 Metric Cards with Animated Counters */}
+      <motion.div 
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+      >
         {/* Total Users */}
-        <div className="bg-white border border-[#D1D1D1] rounded-[2px] p-4 flex items-center justify-between">
+        <motion.div
+          variants={cardVariants}
+          whileHover={shouldReduceMotion ? {} : { y: -2 }}
+          className="bg-white border border-gray-200 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex items-center justify-between shadow-2xs hover:border-gray-300 transition-all"
+        >
           <div>
-            <span className="text-xs font-medium text-[#5C5C5C] block">Total Accounts</span>
-            <span className="text-2xl font-bold text-[#111111] mt-1 block">
-              {metrics.totalUsers}
+            <span className="text-xs font-bold text-gray-600 uppercase tracking-wide block">
+              Total Accounts
             </span>
-            <span className="text-[11px] text-[#5C5C5C] mt-0.5 block">Registered platform users</span>
+            <span className="text-2xl font-bold font-mono text-gray-900 mt-1 block">
+              <AnimatedCounter value={metrics.totalUsers} decimals={0} />
+            </span>
+            <span className="text-[11px] text-gray-400 mt-0.5 block">Registered platform users</span>
           </div>
-          <div className="w-10 h-10 border border-[#D1D1D1] flex items-center justify-center text-[#111111] bg-[#FAFAFA]">
-            <Users className="w-5 h-5 text-[#111111]" />
+          <div className="w-10 h-10 border border-teal-200 rounded-[2px] flex items-center justify-center text-teal-700 bg-teal-50">
+            <Users className="w-5 h-5" />
           </div>
-        </div>
+        </motion.div>
 
         {/* Total Admins */}
-        <div className="bg-white border border-[#D1D1D1] rounded-[2px] p-4 flex items-center justify-between">
+        <motion.div
+          variants={cardVariants}
+          whileHover={shouldReduceMotion ? {} : { y: -2 }}
+          className="bg-white border border-gray-200 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex items-center justify-between shadow-2xs hover:border-gray-300 transition-all"
+        >
           <div>
-            <span className="text-xs font-medium text-[#5C5C5C] block">Administrators</span>
-            <span className="text-2xl font-bold text-[#111111] mt-1 block">
-              {metrics.totalAdmins}
+            <span className="text-xs font-bold text-gray-600 uppercase tracking-wide block">
+              Administrators
             </span>
-            <span className="text-[11px] text-[#5C5C5C] mt-0.5 block">Full CRUD & system management</span>
+            <span className="text-2xl font-bold font-mono text-gray-900 mt-1 block">
+              <AnimatedCounter value={metrics.totalAdmins} decimals={0} />
+            </span>
+            <span className="text-[11px] text-gray-400 mt-0.5 block">Full CRUD & permissions</span>
           </div>
-          <div className="w-10 h-10 border border-[#D1D1D1] flex items-center justify-center text-[#111111] bg-[#FAFAFA]">
-            <ShieldCheck className="w-5 h-5 text-black" />
+          <div className="w-10 h-10 border border-teal-200 rounded-[2px] flex items-center justify-center text-teal-700 bg-teal-50">
+            <ShieldCheck className="w-5 h-5" />
           </div>
-        </div>
+        </motion.div>
 
         {/* Total Operators */}
-        <div className="bg-white border border-[#D1D1D1] rounded-[2px] p-4 flex items-center justify-between">
+        <motion.div
+          variants={cardVariants}
+          whileHover={shouldReduceMotion ? {} : { y: -2 }}
+          className="bg-white border border-gray-200 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex items-center justify-between shadow-2xs hover:border-gray-300 transition-all"
+        >
           <div>
-            <span className="text-xs font-medium text-[#5C5C5C] block">Plant Operators</span>
-            <span className="text-2xl font-bold text-[#111111] mt-1 block">
-              {metrics.totalOperators}
+            <span className="text-xs font-bold text-gray-600 uppercase tracking-wide block">
+              Plant Operators
             </span>
-            <span className="text-[11px] text-[#5C5C5C] mt-0.5 block">Operational monitoring & data logging</span>
+            <span className="text-2xl font-bold font-mono text-gray-900 mt-1 block">
+              <AnimatedCounter value={metrics.totalOperators} decimals={0} />
+            </span>
+            <span className="text-[11px] text-gray-400 mt-0.5 block">Telemetry logging & review</span>
           </div>
-          <div className="w-10 h-10 border border-[#D1D1D1] flex items-center justify-center text-[#111111] bg-[#FAFAFA]">
-            <HardHat className="w-5 h-5 text-[#5C5C5C]" />
+          <div className="w-10 h-10 border border-teal-200 rounded-[2px] flex items-center justify-center text-teal-700 bg-teal-50">
+            <HardHat className="w-5 h-5" />
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Permissions Distinction Banner */}
+      <div className="bg-white border border-gray-200 rounded-[3px] p-4 text-xs shadow-2xs space-y-2">
+        <span className="font-bold text-gray-900 uppercase tracking-wide text-[11px] block">
+          Role Permissions Overview
+        </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-600">
+          <div className="p-3 bg-gray-50 border border-gray-200 rounded-[2px] space-y-1">
+            <div className="flex items-center space-x-1.5 font-bold text-gray-900">
+              <HardHat className="w-3.5 h-3.5 text-teal-700" />
+              <span>Plant Operator:</span>
+            </div>
+            <p className="text-[11px] text-gray-600 leading-relaxed">
+              Allowed to monitor Dashboard, Analytics, and Sustainability. Can log new daily telemetry. Can edit <strong>only readings they created</strong>. Cannot delete readings or access the Admin Panel.
+            </p>
+          </div>
+
+          <div className="p-3 bg-gray-50 border border-gray-200 rounded-[2px] space-y-1">
+            <div className="flex items-center space-x-1.5 font-bold text-gray-900">
+              <ShieldCheck className="w-3.5 h-3.5 text-teal-700" />
+              <span>System Administrator:</span>
+            </div>
+            <p className="text-[11px] text-gray-600 leading-relaxed">
+              Unrestricted access. Can edit or permanently delete <strong>any reading</strong>. Access to User Directory, role re-assignments, and operator deletion. Self-account is protected from deletion or demotion.
+            </p>
           </div>
         </div>
       </div>
 
       {/* User Directory Table */}
-      <div className="bg-white border border-[#D1D1D1] rounded-[2px] p-4 sm:p-5 space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-[#E5E5E5]">
+      <div className="bg-white border border-gray-200 rounded-[3px] p-4 sm:p-5 space-y-4 hover:border-gray-300 transition-colors shadow-2xs">
+        <div className="flex items-center justify-between pb-3 border-b border-gray-100">
           <div>
-            <h3 className="text-sm font-semibold text-[#111111]">User Directory</h3>
-            <p className="text-xs text-[#5C5C5C] mt-0.5">
+            <h3 className="text-sm font-bold text-gray-900 tracking-tight">System User Directory</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
               Review platform accounts, toggle permission roles, and manage credentials
             </p>
           </div>
-          <span className="text-xs text-[#5C5C5C] border border-[#D1D1D1] px-2.5 py-0.5 rounded-[2px]">
+          <span className="text-xs text-gray-600 bg-gray-50 border border-gray-200 px-2.5 py-0.5 rounded-[2px] font-mono">
             {users.length} accounts
           </span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-[#111111] border-collapse">
+          <table className="w-full text-left text-xs text-gray-900 border-collapse">
             <thead>
-              <tr className="border-b border-[#D1D1D1] text-[#5C5C5C] font-medium bg-[#FAFAFA]">
+              <tr className="border-b border-gray-200 text-gray-500 font-semibold bg-gray-50">
                 <th className="py-2.5 px-3">User Details</th>
                 <th className="py-2.5 px-3">Email Address</th>
                 <th className="py-2.5 px-3">Assigned Role</th>
@@ -219,24 +259,33 @@ export default function AdminPage() {
                 <th className="py-2.5 px-3 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E5E5E5]">
+            <motion.tbody 
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="divide-y divide-gray-100"
+            >
               {users.map((targetUser) => {
                 const isSelf = currentUserId && targetUser._id === currentUserId;
                 const isUpdating = roleUpdatingId === targetUser._id;
 
                 return (
-                  <tr key={targetUser._id} className="hover:bg-[#F9F9F9] transition-colors">
+                  <motion.tr 
+                    key={targetUser._id} 
+                    variants={tableRowVariants}
+                    className="hover:bg-teal-50/20 transition-colors"
+                  >
                     {/* User Name */}
                     <td className="py-3 px-3">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-7 h-7 border border-[#D1D1D1] bg-[#FAFAFA] flex items-center justify-center text-xs font-semibold text-[#111111]">
+                      <div className="flex items-center space-x-2.5">
+                        <div className="w-7 h-7 border border-gray-200 bg-gray-100 rounded-[2px] flex items-center justify-center text-xs font-bold text-gray-800">
                           {targetUser.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-semibold text-[#111111] flex items-center space-x-1.5">
+                          <div className="font-bold text-gray-900 flex items-center space-x-1.5">
                             <span>{targetUser.name}</span>
                             {isSelf && (
-                              <span className="text-[10px] bg-black text-white px-1.5 py-0.2 rounded-[2px]">
+                              <span className="text-[10px] bg-gray-900 text-white px-1.5 py-0.2 rounded-[2px] font-mono">
                                 You
                               </span>
                             )}
@@ -246,21 +295,21 @@ export default function AdminPage() {
                     </td>
 
                     {/* Email */}
-                    <td className="py-3 px-3 text-[#5C5C5C] font-mono">
+                    <td className="py-3 px-3 text-gray-600 font-mono text-[11px]">
                       {targetUser.email}
                     </td>
 
                     {/* Current Role Badge */}
                     <td className="py-3 px-3">
-                      <span className={`inline-flex items-center space-x-1 px-2 py-0.5 text-[11px] font-medium border rounded-[2px] ${
+                      <span className={`inline-flex items-center space-x-1 px-2 py-0.5 text-[11px] font-semibold border rounded-[2px] ${
                         targetUser.role === 'admin'
-                          ? 'bg-black text-white border-black'
-                          : 'bg-[#F5F5F5] text-[#111111] border-[#D1D1D1]'
+                          ? 'bg-gray-900 text-white border-gray-900'
+                          : 'bg-teal-50 text-teal-800 border-teal-200'
                       }`}>
                         {targetUser.role === 'admin' ? (
-                          <ShieldCheck className="w-3 h-3 text-white" />
+                          <ShieldCheck className="w-3 h-3" />
                         ) : (
-                          <HardHat className="w-3 h-3 text-[#5C5C5C]" />
+                          <HardHat className="w-3 h-3 text-teal-700" />
                         )}
                         <span className="capitalize">{targetUser.role}</span>
                       </span>
@@ -269,8 +318,9 @@ export default function AdminPage() {
                     {/* Role Control Dropdown */}
                     <td className="py-3 px-3">
                       {isSelf ? (
-                        <span className="text-[11px] text-[#8C8C8C] italic">
-                          Protected (Current Admin)
+                        <span className="text-[11px] text-gray-400 italic flex items-center space-x-1">
+                          <Lock className="w-3 h-3" />
+                          <span>Protected (Active Admin)</span>
                         </span>
                       ) : (
                         <div className="flex items-center space-x-2">
@@ -278,89 +328,118 @@ export default function AdminPage() {
                             disabled={isUpdating}
                             value={targetUser.role}
                             onChange={(e) => handleRoleChange(targetUser, e.target.value)}
-                            className="bg-white border border-[#D1D1D1] hover:border-black text-[#111111] text-xs px-2 py-1 rounded-[2px] focus:outline-none focus:border-black cursor-pointer transition-colors disabled:opacity-50"
+                            className="bg-white border border-gray-300 hover:border-gray-900 text-gray-900 text-xs px-2.5 py-1 rounded-[2px] focus:outline-none focus:border-teal-600 cursor-pointer transition-colors disabled:opacity-50"
                           >
                             <option value="operator">Operator</option>
                             <option value="admin">Admin</option>
                           </select>
-                          {isUpdating && <Loader2 className="w-3 h-3 animate-spin text-black" />}
+                          {isUpdating && <Loader2 className="w-3 h-3 animate-spin text-teal-600" />}
                         </div>
                       )}
                     </td>
 
                     {/* Registered Date */}
-                    <td className="py-3 px-3 text-[#5C5C5C]">
+                    <td className="py-3 px-3 text-gray-500 font-mono text-[11px]">
                       {targetUser.createdAt ? formatDate(targetUser.createdAt) : 'N/A'}
                     </td>
 
                     {/* Actions */}
                     <td className="py-3 px-3 text-center">
                       {isSelf ? (
-                        <span className="text-[11px] text-[#8C8C8C] italic">
+                        <span className="text-[11px] text-gray-400 italic">
                           Self account
                         </span>
                       ) : (
-                        <button
+                        <motion.button
+                          whileHover={shouldReduceMotion ? {} : { y: -1 }}
+                          whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
                           onClick={() => setDeleteTarget(targetUser)}
                           title="Delete user account"
-                          className="inline-flex items-center space-x-1 px-2.5 py-1 bg-white border border-[#D1D1D1] hover:border-red-600 hover:text-red-600 text-[#5C5C5C] rounded-[2px] text-[11px] font-medium transition-colors"
+                          className="inline-flex items-center space-x-1 px-2.5 py-1 bg-white border border-gray-300 hover:border-red-600 hover:text-red-600 text-gray-600 rounded-[2px] text-[11px] font-semibold transition-colors"
                         >
                           <Trash2 className="w-3 h-3" />
                           <span>Delete</span>
-                        </button>
+                        </motion.button>
                       )}
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
-            </tbody>
+            </motion.tbody>
           </table>
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-[1px]">
-          <div className="bg-white border border-black w-full max-w-md p-5 rounded-[2px] shadow-lg space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 border border-red-600 bg-red-50 flex items-center justify-center text-red-600 flex-shrink-0">
-                <Trash2 className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-[#111111]">Delete User Account</h3>
-                <p className="text-xs text-[#5C5C5C] mt-1">
-                  Are you sure you want to permanently delete the account for{' '}
-                  <strong className="text-black font-semibold">{deleteTarget.name}</strong> (
-                  <span className="font-mono text-xs">{deleteTarget.email}</span>)?
-                </p>
-                <p className="text-[11px] text-red-600 mt-2">
-                  This action is irreversible and the user will immediately lose system access.
-                </p>
-              </div>
-            </div>
+      {/* Delete User Confirmation Modal */}
+      <AnimatePresence>
+        {deleteTarget && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+            {/* Backdrop */}
+            <motion.div
+              variants={modalOverlayVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              onClick={() => setDeleteTarget(null)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-[1px]"
+            />
 
-            <div className="flex justify-end space-x-2 pt-3 border-t border-[#E5E5E5]">
-              <button
-                type="button"
-                onClick={() => setDeleteTarget(null)}
-                disabled={deleteLoading}
-                className="px-3 py-1.5 bg-white border border-[#D1D1D1] hover:border-black text-[#111111] text-xs font-medium rounded-[2px] transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                disabled={deleteLoading}
-                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-[2px] transition-colors inline-flex items-center space-x-1"
-              >
-                {deleteLoading && <Loader2 className="w-3 h-3 animate-spin" />}
-                <span>{deleteLoading ? 'Deleting...' : 'Confirm Delete'}</span>
-              </button>
-            </div>
+            {/* Modal Dialog */}
+            <motion.div
+              variants={shouldReduceMotion ? {} : modalContentVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="relative w-full max-w-md bg-white border border-gray-200 rounded-[3px] p-6 text-gray-900 my-8 shadow-xl z-10 space-y-4"
+            >
+              <div className="flex items-start space-x-3 pb-3 border-b border-gray-100">
+                <div className="w-9 h-9 rounded-[2px] bg-red-50 border border-red-200 flex items-center justify-center text-red-600 flex-shrink-0">
+                  <Trash2 className="w-4.5 h-4.5" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-bold text-gray-900">Delete User Account</h3>
+                  <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                    Are you sure you want to permanently delete the account for{' '}
+                    <strong className="text-gray-900 font-semibold">{deleteTarget.name}</strong> (
+                    <span className="font-mono text-xs text-gray-700">{deleteTarget.email}</span>)?
+                  </p>
+                  <p className="text-[11px] text-red-600 font-medium mt-2">
+                    This user will immediately forfeit access to the system.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setDeleteTarget(null)}
+                  className="text-gray-400 hover:text-gray-700 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={deleteLoading}
+                  className="px-3.5 py-1.5 bg-white border border-gray-300 hover:border-gray-900 text-gray-800 text-xs font-semibold rounded-[2px] transition-colors"
+                >
+                  Cancel
+                </button>
+                <motion.button
+                  whileHover={shouldReduceMotion ? {} : { y: -1 }}
+                  whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+                  type="button"
+                  onClick={handleConfirmDelete}
+                  disabled={deleteLoading}
+                  className="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-[2px] transition-colors inline-flex items-center space-x-1.5 shadow-xs disabled:opacity-50"
+                >
+                  {deleteLoading && <Loader2 className="w-3 h-3 animate-spin" />}
+                  <span>{deleteLoading ? 'Deleting...' : 'Confirm Delete'}</span>
+                </motion.button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }

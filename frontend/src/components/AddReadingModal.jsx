@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { X, AlertCircle, CheckCircle2, Save, Plus } from 'lucide-react';
 import { api } from '../services/api';
+import { modalOverlayVariants, modalContentVariants } from '../utils/animations';
 
 export default function AddReadingModal({ 
   isOpen, 
@@ -8,6 +10,7 @@ export default function AddReadingModal({
   onReadingAdded,
   initialData = null 
 }) {
+  const shouldReduceMotion = useReducedMotion();
   const isEditMode = Boolean(initialData && initialData._id);
 
   const defaultValues = {
@@ -49,9 +52,7 @@ export default function AddReadingModal({
     }
     setError(null);
     setSuccess(false);
-  }, [initialData, isOpen]);
-
-  if (!isOpen) return null;
+  }, [initialData, isOpen, isEditMode]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -82,7 +83,7 @@ export default function AddReadingModal({
         if (onReadingAdded) {
           onReadingAdded();
         }
-      }, 900);
+      }, 700);
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || err.message || `Failed to ${isEditMode ? 'update' : 'record'} daily reading.`);
@@ -92,254 +93,265 @@ export default function AddReadingModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-white border border-[#D1D1D1] rounded-[2px] p-6 text-[#111111] my-8 shadow-sm">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#D1D1D1]">
-          <div>
-            <h3 className="text-base font-bold text-[#111111]">
-              {isEditMode ? 'Edit Daily Reading' : 'Add Daily Reading'}
-            </h3>
-            <p className="text-xs text-[#5C5C5C] mt-0.5">
-              {isEditMode 
-                ? `Update production, cost, and resource metrics for ${formData.date}`
-                : 'Enter production, cost, and resource metrics for a single operating day'}
-            </p>
-          </div>
-          <button
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          {/* Backdrop */}
+          <motion.div
+            variants={modalOverlayVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             onClick={onClose}
-            className="p-1 rounded-[2px] text-[#5C5C5C] hover:text-[#111111] hover:bg-[#F5F5F5] transition-colors"
+            className="fixed inset-0 bg-black/40 backdrop-blur-[1px]"
+          />
+
+          {/* Modal Card */}
+          <motion.div
+            variants={shouldReduceMotion ? {} : modalContentVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="relative w-full max-w-2xl bg-white border border-gray-200 rounded-[3px] p-6 text-gray-900 my-8 shadow-xl z-10"
           >
-            <X className="w-4 h-4" />
-          </button>
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
+              <div>
+                <h3 className="text-base font-bold text-gray-900 flex items-center space-x-2">
+                  <span>{isEditMode ? 'Edit Daily Reading' : 'Add Daily Reading'}</span>
+                  <span className="text-[10px] font-normal uppercase font-mono px-2 py-0.5 rounded-[2px] bg-teal-50 border border-teal-200 text-teal-800">
+                    Simulated Operational Log
+                  </span>
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Record plant telemetry for production, resources, and operating expenditures.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-700 transition-colors p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Notification alert */}
+            {error && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 border-l-4 border-l-red-600 rounded-[2px] flex items-center space-x-2 text-xs text-red-800">
+                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {success && (
+              <div className="mt-4 p-3 bg-teal-50 border border-teal-200 border-l-4 border-l-teal-600 rounded-[2px] flex items-center space-x-2 text-xs text-teal-800">
+                <CheckCircle2 className="w-4 h-4 text-teal-600 flex-shrink-0" />
+                <span>{success}</span>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+                
+                {/* 1. Date */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    required
+                    value={formData.date}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+                  />
+                </div>
+
+                {/* 2. Target Production */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Target Production (kg) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    name="targetProduction"
+                    required
+                    value={formData.targetProduction}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+                {/* 3. Hydrogen Produced */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Hydrogen Produced (kg) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    name="hydrogenProduced"
+                    required
+                    value={formData.hydrogenProduced}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+                {/* 4. Hydrogen Consumed */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Hydrogen Consumed (kg) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    name="hydrogenConsumed"
+                    required
+                    value={formData.hydrogenConsumed}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+                {/* 5. Energy Consumed */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Total Energy Consumed (MWh) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="energyConsumed"
+                    required
+                    value={formData.energyConsumed}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+                {/* 6. Renewable Energy */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Renewable Energy (MWh) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="renewableEnergy"
+                    required
+                    value={formData.renewableEnergy}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+                {/* 7. Water Consumed */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Water Consumed (Liters) *
+                  </label>
+                  <input
+                    type="number"
+                    name="waterConsumed"
+                    required
+                    value={formData.waterConsumed}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+                {/* 8. CO2 Emissions */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    CO₂ Emissions (kg CO₂) *
+                  </label>
+                  <input
+                    type="number"
+                    name="co2Emissions"
+                    required
+                    value={formData.co2Emissions}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+                {/* 9. Electricity Cost */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Electricity Cost (₹) *
+                  </label>
+                  <input
+                    type="number"
+                    name="electricityCost"
+                    required
+                    value={formData.electricityCost}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+                {/* 10. Water Cost */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Water Cost (₹) *
+                  </label>
+                  <input
+                    type="number"
+                    name="waterCost"
+                    required
+                    value={formData.waterCost}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+                {/* 11. Maintenance Cost */}
+                <div className="sm:col-span-2">
+                  <label className="block text-gray-700 font-semibold mb-1">
+                    Maintenance Cost (₹) *
+                  </label>
+                  <input
+                    type="number"
+                    name="maintenanceCost"
+                    required
+                    value={formData.maintenanceCost}
+                    onChange={handleChange}
+                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                  />
+                </div>
+
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-3 border-t border-gray-100 flex items-center justify-end space-x-2.5">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  disabled={loading}
+                  className="px-4 py-1.5 bg-white border border-gray-300 hover:border-gray-900 text-gray-800 rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <motion.button
+                  whileHover={shouldReduceMotion ? {} : { y: -1 }}
+                  whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex items-center space-x-1.5 px-4 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs"
+                >
+                  {isEditMode ? <Save className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                  <span>{loading ? 'Saving...' : isEditMode ? 'Update Reading' : 'Save Reading'}</span>
+                </motion.button>
+              </div>
+            </form>
+          </motion.div>
         </div>
-
-        {/* Feedback states */}
-        {error && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 border-l-4 border-l-red-600 rounded-[2px] flex items-center space-x-2 text-xs text-red-800">
-            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        {success && (
-          <div className="mt-4 p-3 bg-green-50 border border-green-200 border-l-4 border-l-green-600 rounded-[2px] flex items-center space-x-2 text-xs text-green-800">
-            <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-            <span>{typeof success === 'string' ? success : 'Saved successfully. Updating dashboard...'}</span>
-          </div>
-        )}
-
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
-            
-            {/* Date */}
-            <div className="sm:col-span-2">
-              <label className="block text-[#111111] font-medium mb-1">
-                Date *
-              </label>
-              <input
-                type="date"
-                name="date"
-                required
-                value={formData.date}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* Hydrogen Produced */}
-            <div>
-              <label className="block text-[#111111] font-medium mb-1">
-                Hydrogen Produced (kg) *
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                name="hydrogenProduced"
-                required
-                value={formData.hydrogenProduced}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* Hydrogen Consumed */}
-            <div>
-              <label className="block text-[#111111] font-medium mb-1">
-                Hydrogen Consumed (kg) *
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                name="hydrogenConsumed"
-                required
-                value={formData.hydrogenConsumed}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* Target Production */}
-            <div>
-              <label className="block text-[#111111] font-medium mb-1">
-                Target Production (kg) *
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                name="targetProduction"
-                required
-                value={formData.targetProduction}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* Energy Consumed */}
-            <div>
-              <label className="block text-[#111111] font-medium mb-1">
-                Energy Consumed (MWh) *
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                name="energyConsumed"
-                required
-                value={formData.energyConsumed}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* Renewable Energy */}
-            <div>
-              <label className="block text-[#111111] font-medium mb-1">
-                Renewable Energy Share (MWh) *
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                name="renewableEnergy"
-                required
-                value={formData.renewableEnergy}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* Water Consumed */}
-            <div>
-              <label className="block text-[#111111] font-medium mb-1">
-                Water Consumed (Liters) *
-              </label>
-              <input
-                type="number"
-                min="0"
-                name="waterConsumed"
-                required
-                value={formData.waterConsumed}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* Electricity Cost */}
-            <div>
-              <label className="block text-[#111111] font-medium mb-1">
-                Electricity Cost (₹) *
-              </label>
-              <input
-                type="number"
-                min="0"
-                name="electricityCost"
-                required
-                value={formData.electricityCost}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* Water Cost */}
-            <div>
-              <label className="block text-[#111111] font-medium mb-1">
-                Water Cost (₹) *
-              </label>
-              <input
-                type="number"
-                min="0"
-                name="waterCost"
-                required
-                value={formData.waterCost}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* Maintenance Cost */}
-            <div>
-              <label className="block text-[#111111] font-medium mb-1">
-                Maintenance Cost (₹) *
-              </label>
-              <input
-                type="number"
-                min="0"
-                name="maintenanceCost"
-                required
-                value={formData.maintenanceCost}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-            {/* CO2 Emissions */}
-            <div className="sm:col-span-2">
-              <label className="block text-[#111111] font-medium mb-1">
-                CO₂ Emissions (kg) *
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                name="co2Emissions"
-                required
-                value={formData.co2Emissions}
-                onChange={handleChange}
-                className="w-full bg-white border border-[#D1D1D1] rounded-[2px] px-3 py-1.5 text-[#111111] focus:outline-none focus:border-black"
-              />
-            </div>
-
-          </div>
-
-          {/* Action Buttons */}
-          <div className="pt-3 border-t border-[#D1D1D1] flex items-center justify-end space-x-2.5">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={loading}
-              className="px-3.5 py-1.5 bg-white border border-[#D1D1D1] hover:border-black text-[#111111] rounded-[2px] text-xs font-medium transition-colors disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-1.5 bg-[#111111] hover:bg-black text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50"
-            >
-              {loading 
-                ? (isEditMode ? 'Saving Changes...' : 'Saving...') 
-                : (isEditMode ? 'Save Changes' : 'Save Reading')}
-            </button>
-          </div>
-        </form>
-
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }
