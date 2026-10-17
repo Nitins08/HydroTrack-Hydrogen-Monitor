@@ -26,6 +26,7 @@ import ChartContainer from '../components/ChartContainer';
 import ChartTooltip from '../components/ChartTooltip';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
+import { SkeletonKPIGrid, SkeletonChart } from '../components/SkeletonLoader';
 import AnimatedCounter from '../components/AnimatedCounter';
 import { pageVariants, staggerContainer, cardVariants } from '../utils/animations';
 
@@ -55,7 +56,13 @@ export default function SustainabilityPage({ refreshTrigger }) {
   }, [period, refreshTrigger]);
 
   if (loading && !data) {
-    return <LoadingState message="Calculating plant sustainability score & ESG telemetry..." />;
+    return (
+      <div className="space-y-6">
+        <div className="h-10 bg-gray-200/70 animate-pulse rounded-[3px] w-64" />
+        <SkeletonKPIGrid count={3} />
+        <SkeletonChart />
+      </div>
+    );
   }
 
   if (error && !data) {
@@ -233,7 +240,7 @@ export default function SustainabilityPage({ refreshTrigger }) {
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pb-5 border-b border-gray-100">
           
           {/* Left: Gauge Circle */}
-          <div className="flex items-center space-x-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6">
             <div className="relative w-32 h-32 flex items-center justify-center flex-shrink-0">
               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
                 {/* Background Ring */}
@@ -344,6 +351,9 @@ export default function SustainabilityPage({ refreshTrigger }) {
       <ChartContainer
         title="Renewable Energy Share Over Time"
         description="Daily percentage of total plant energy drawn from zero-emission renewable sources"
+        hasData={chartData.length > 0}
+        emptyTitle="No renewable energy telemetry logged"
+        emptyDescription="There are no data points available for the selected cycle."
       >
         <div className="h-72 w-full mt-2">
           <ResponsiveContainer width="100%" height="100%">

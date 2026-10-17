@@ -33,6 +33,8 @@ import ChartTooltip from '../components/ChartTooltip';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
+import EmptyState from '../components/EmptyState';
+import { DashboardSkeleton } from '../components/SkeletonLoader';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { pageVariants, staggerContainer, tableRowVariants } from '../utils/animations';
@@ -115,7 +117,7 @@ export default function DashboardPage({ refreshTrigger, onEditReading, onTrigger
   }, [period, refreshTrigger]);
 
   if (loading && !data) {
-    return <LoadingState message="Loading plant performance dashboard..." />;
+    return <DashboardSkeleton />;
   }
 
   if (error && !data) {
@@ -271,6 +273,9 @@ export default function DashboardPage({ refreshTrigger, onEditReading, onTrigger
         period={period}
         onPeriodChange={setPeriod}
         lastUpdated={lastUpdated}
+        hasData={chartData.length > 0}
+        emptyTitle="No production telemetry logged"
+        emptyDescription="There are no hydrogen production or consumption logs available for this cycle."
       >
         <div className="h-72 w-full mt-2">
           <ResponsiveContainer width="100%" height="100%">
@@ -332,26 +337,33 @@ export default function DashboardPage({ refreshTrigger, onEditReading, onTrigger
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-gray-900 border-collapse">
-            <thead>
-              <tr className="border-b border-gray-200 text-gray-500 font-semibold bg-gray-50">
-                <th className="py-2.5 px-3">Date</th>
-                <th className="py-2.5 px-3 text-right">Produced</th>
-                <th className="py-2.5 px-3 text-right">Consumed</th>
-                <th className="py-2.5 px-3 text-right">Efficiency</th>
-                <th className="py-2.5 px-3 text-right">Total Cost</th>
-                <th className="py-2.5 px-3 text-right">Cost / kg</th>
-                <th className="py-2.5 px-3 text-right">Renewable %</th>
-                <th className="py-2.5 px-3 text-center">Actions</th>
-              </tr>
-            </thead>
-            <motion.tbody 
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="divide-y divide-gray-100"
-            >
+        {recentReadings.length === 0 ? (
+          <EmptyState
+            icon={Clock}
+            title="No recent readings recorded"
+            description="No plant readings have been saved for this cycle. Use the Add Reading button above to record the day's telemetry."
+          />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-gray-900 border-collapse">
+              <thead>
+                <tr className="border-b border-gray-200 text-gray-500 font-semibold bg-gray-50">
+                  <th className="py-2.5 px-3">Date</th>
+                  <th className="py-2.5 px-3 text-right">Produced</th>
+                  <th className="py-2.5 px-3 text-right">Consumed</th>
+                  <th className="py-2.5 px-3 text-right">Efficiency</th>
+                  <th className="py-2.5 px-3 text-right">Total Cost</th>
+                  <th className="py-2.5 px-3 text-right">Cost / kg</th>
+                  <th className="py-2.5 px-3 text-right">Renewable %</th>
+                  <th className="py-2.5 px-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <motion.tbody 
+                variants={staggerContainer}
+                initial="initial"
+                animate="animate"
+                className="divide-y divide-gray-100"
+              >
               {recentReadings.map((row) => {
                 const canEdit = isAdmin || (row.createdBy && currentUserId && row.createdBy === currentUserId);
                 const canDelete = isAdmin;
@@ -416,6 +428,7 @@ export default function DashboardPage({ refreshTrigger, onEditReading, onTrigger
             </motion.tbody>
           </table>
         </div>
+        )}
       </div>
 
       {/* Delete Confirmation Modal */}

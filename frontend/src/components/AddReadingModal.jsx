@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { X, AlertCircle, CheckCircle2, Save, Plus } from 'lucide-react';
+import { X, AlertCircle, CheckCircle2, Save, Plus, Loader2 } from 'lucide-react';
 import { api } from '../services/api';
 import { modalOverlayVariants, modalContentVariants } from '../utils/animations';
 
@@ -344,7 +344,13 @@ export default function AddReadingModal({
                   disabled={loading}
                   className="inline-flex items-center space-x-1.5 px-4 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs"
                 >
-                  {isEditMode ? <Save className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                  {loading ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : isEditMode ? (
+                    <Save className="w-3.5 h-3.5" />
+                  ) : (
+                    <Plus className="w-3.5 h-3.5" />
+                  )}
                   <span>{loading ? 'Saving...' : isEditMode ? 'Update Reading' : 'Save Reading'}</span>
                 </motion.button>
               </div>

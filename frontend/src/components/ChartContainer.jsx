@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { cardVariants } from '../utils/animations';
-import { Calendar, Database } from 'lucide-react';
+import { Calendar, Database, BarChart2 } from 'lucide-react';
+import EmptyState from './EmptyState';
 
 export default function ChartContainer({
   title,
@@ -15,6 +16,10 @@ export default function ChartContainer({
   ],
   lastUpdated,
   showDataSource = true,
+  hasData = true,
+  emptyTitle = 'No telemetry data available',
+  emptyDescription = 'There is no recorded data for the selected period.',
+  emptyAction,
   children
 }) {
   const shouldReduceMotion = useReducedMotion();
@@ -73,9 +78,22 @@ export default function ChartContainer({
         </div>
       </div>
 
-      {/* Chart Children */}
+      {/* Chart Children or Empty State */}
       <div className="w-full">
-        {children}
+        {!hasData ? (
+          <EmptyState
+            icon={BarChart2}
+            title={emptyTitle}
+            description={emptyDescription}
+            action={emptyAction}
+          />
+        ) : (
+          <div className="overflow-x-auto w-full">
+            <div className="min-w-[480px] sm:min-w-0 w-full">
+              {children}
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );

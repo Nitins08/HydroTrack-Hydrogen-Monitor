@@ -33,8 +33,8 @@ export default function Navbar({ onOpenAddModal }) {
         <div className="flex items-center justify-between h-16">
           
           {/* Brand Logo & Title */}
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-[3px] border border-teal-600 bg-teal-50 flex items-center justify-center text-teal-700 shadow-2xs">
+          <NavLink to="/" className="flex items-center space-x-3 group">
+            <div className="w-8 h-8 rounded-[3px] border border-teal-600 bg-teal-50 flex items-center justify-center text-teal-700 shadow-2xs group-hover:bg-teal-100/60 transition-colors">
               <Droplets className="w-4.5 h-4.5 text-teal-600 fill-teal-600" />
             </div>
             <div>
@@ -48,7 +48,7 @@ export default function Navbar({ onOpenAddModal }) {
                 Hydrogen Production & Sustainability Monitoring
               </p>
             </div>
-          </div>
+          </NavLink>
 
           {/* Desktop Navigation Links */}
           {isAuthenticated && (
@@ -86,7 +86,7 @@ export default function Navbar({ onOpenAddModal }) {
                   <span className="hidden sm:inline">Add Reading</span>
                 </motion.button>
 
-                {/* User Role & Profile Badge */}
+                {/* User Role & Profile Badge (Desktop) */}
                 <div className="hidden sm:flex items-center space-x-2 pl-2 border-l border-gray-200">
                   <div className="flex flex-col items-end">
                     <span className="text-xs font-bold text-gray-900 leading-tight">
@@ -119,11 +119,13 @@ export default function Navbar({ onOpenAddModal }) {
                   </motion.button>
                 </div>
 
-                {/* Mobile Menu Button */}
+                {/* Mobile Menu Toggle Button */}
                 <button
+                  type="button"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="md:hidden p-1.5 text-gray-600 hover:text-gray-900 border border-gray-200 rounded-[2px]"
-                  aria-label="Toggle Navigation"
+                  className="md:hidden p-2 text-gray-700 hover:text-gray-900 border border-gray-300 rounded-[2px] hover:bg-gray-50 transition-colors"
+                  aria-label="Toggle navigation menu"
+                  aria-expanded={mobileMenuOpen}
                 >
                   {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
                 </button>
@@ -147,45 +149,121 @@ export default function Navbar({ onOpenAddModal }) {
           </div>
 
         </div>
+      </div>
 
-        {/* Mobile Dropdown Menu */}
-        {isAuthenticated && mobileMenuOpen && (
-          <div className="md:hidden py-3 border-t border-gray-100 space-y-2">
-            <div className="flex items-center justify-between pb-2 border-b border-gray-100 px-1">
-              <div>
-                <span className="text-xs font-bold text-gray-900 block">{user?.name}</span>
-                <span className="text-[10px] uppercase font-mono text-teal-700 font-semibold">{user?.role}</span>
+      {/* Mobile Drawer Navigation with Backdrop */}
+      {isAuthenticated && (
+        <>
+          {/* Backdrop overlay */}
+          {mobileMenuOpen && (
+            <div 
+              className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-[1px] transition-opacity"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+          )}
+
+          {/* Drawer Panel */}
+          <div
+            className={`fixed top-0 right-0 bottom-0 w-72 max-w-[85vw] bg-white border-l border-gray-200 z-50 md:hidden flex flex-col shadow-xl transform transition-transform duration-200 ease-in-out ${
+              mobileMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
+            }`}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile Navigation"
+          >
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50/70">
+              <div className="flex items-center space-x-2">
+                <div className="w-7 h-7 rounded-[2px] border border-teal-600 bg-teal-50 flex items-center justify-center text-teal-700">
+                  <Droplets className="w-4 h-4 text-teal-600 fill-teal-600" />
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-gray-900 block leading-tight">HydroTrack</span>
+                  <span className="text-[10px] text-gray-500 font-mono">Plant 01 Mon</span>
+                </div>
               </div>
               <button
-                onClick={handleLogout}
-                className="text-xs text-red-600 flex items-center space-x-1"
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1.5 text-gray-500 hover:text-gray-900 border border-gray-200 rounded-[2px]"
+                aria-label="Close menu"
               >
-                <LogOut className="w-3 h-3" />
-                <span>Logout</span>
+                <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-1.5 pt-1">
+
+            {/* User Profile Info in Drawer */}
+            <div className="p-4 border-b border-gray-100 bg-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-gray-900 block">{user?.name || 'Operator'}</span>
+                  <span className="text-[11px] text-gray-500 font-mono">{user?.email}</span>
+                </div>
+                <span className={`inline-flex items-center space-x-1 text-[9px] uppercase font-mono px-2 py-0.5 rounded-[2px] border font-semibold ${
+                  isAdmin
+                    ? 'bg-gray-900 text-white border-gray-900'
+                    : 'bg-teal-50 text-teal-800 border-teal-200'
+                }`}>
+                  {isAdmin ? <ShieldCheck className="w-2.5 h-2.5" /> : <HardHat className="w-2.5 h-2.5" />}
+                  <span>{user?.role || 'operator'}</span>
+                </span>
+              </div>
+
+              {/* Add Reading Action for Mobile */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenAddModal();
+                }}
+                className="mt-3 w-full flex items-center justify-center space-x-2 px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-[2px] shadow-xs transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Daily Reading</span>
+              </button>
+            </div>
+
+            {/* Navigation Links (min 44px tap targets) */}
+            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 py-1 block font-mono">
+                Navigation
+              </span>
               {navLinks.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `px-3 py-2 text-xs font-semibold rounded-[2px] ${
+                    `flex items-center min-h-[44px] px-3 py-2.5 text-xs font-semibold rounded-[2px] transition-colors ${
                       isActive
-                        ? 'bg-teal-50 text-teal-800 font-bold border border-teal-200'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'bg-teal-50 text-teal-800 font-bold border-l-4 border-teal-600 pl-2.5'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                     }`
                   }
                 >
                   {item.label}
                 </NavLink>
               ))}
+            </nav>
+
+            {/* Drawer Footer with Logout */}
+            <div className="p-4 border-t border-gray-200 bg-gray-50/50">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="w-full flex items-center justify-center space-x-2 min-h-[44px] px-3 py-2 bg-white border border-gray-300 hover:border-red-600 text-gray-700 hover:text-red-600 text-xs font-medium rounded-[2px] transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out</span>
+              </button>
             </div>
           </div>
-        )}
-
-      </div>
+        </>
+      )}
     </header>
   );
 }

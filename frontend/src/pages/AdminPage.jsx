@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
+import EmptyState from '../components/EmptyState';
+import { SkeletonTable } from '../components/SkeletonLoader';
 import AnimatedCounter from '../components/AnimatedCounter';
 import { 
   pageVariants, 
@@ -103,7 +105,17 @@ export default function AdminPage() {
   };
 
   if (loading && users.length === 0) {
-    return <LoadingState message="Loading administrative user directory..." />;
+    return (
+      <div className="space-y-6">
+        <div className="h-10 bg-gray-200/70 animate-pulse rounded-[3px] w-64" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="h-24 bg-gray-200/70 animate-pulse rounded-[3px]" />
+          <div className="h-24 bg-gray-200/70 animate-pulse rounded-[3px]" />
+          <div className="h-24 bg-gray-200/70 animate-pulse rounded-[3px]" />
+        </div>
+        <SkeletonTable rows={5} columns={6} />
+      </div>
+    );
   }
 
   if (error && users.length === 0) {
@@ -247,8 +259,15 @@ export default function AdminPage() {
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-gray-900 border-collapse">
+        {users.length === 0 ? (
+          <EmptyState
+            icon={Users}
+            title="No user accounts registered"
+            description="There are currently no registered users in the database."
+          />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-gray-900 border-collapse min-w-[620px]">
             <thead>
               <tr className="border-b border-gray-200 text-gray-500 font-semibold bg-gray-50">
                 <th className="py-2.5 px-3">User Details</th>
@@ -368,6 +387,7 @@ export default function AdminPage() {
             </motion.tbody>
           </table>
         </div>
+        )}
       </div>
 
       {/* Delete User Confirmation Modal */}

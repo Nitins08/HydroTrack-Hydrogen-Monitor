@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Droplets, Eye, EyeOff, AlertCircle, CheckCircle2, UserPlus } from 'lucide-react';
+import { Droplets, Eye, EyeOff, AlertCircle, CheckCircle2, UserPlus, Loader2 } from 'lucide-react';
 import { api } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { pageVariants } from '../utils/animations';
@@ -211,7 +211,7 @@ export default function SignupPage() {
                 disabled={loading || success}
                 className="w-full py-2.5 bg-gray-900 hover:bg-black text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs flex items-center justify-center space-x-1.5"
               >
-                <UserPlus className="w-3.5 h-3.5" />
+                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UserPlus className="w-3.5 h-3.5" />}
                 <span>{loading ? 'Creating Account...' : 'Create Operator Account'}</span>
               </motion.button>
             </div>

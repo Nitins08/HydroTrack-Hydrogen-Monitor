@@ -30,6 +30,7 @@ import ChartContainer from '../components/ChartContainer';
 import ChartTooltip from '../components/ChartTooltip';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
+import { SkeletonKPIGrid, SkeletonChart } from '../components/SkeletonLoader';
 import { pageVariants, staggerContainer, cardVariants } from '../utils/animations';
 
 export default function AnalyticsPage({ refreshTrigger }) {
@@ -59,7 +60,13 @@ export default function AnalyticsPage({ refreshTrigger }) {
   }, [period, refreshTrigger]);
 
   if (loading && !data) {
-    return <LoadingState message="Aggregating production & economic analytics..." />;
+    return (
+      <div className="space-y-6">
+        <div className="h-10 bg-gray-200/70 animate-pulse rounded-[3px] w-64" />
+        <SkeletonKPIGrid count={5} />
+        <SkeletonChart />
+      </div>
+    );
   }
 
   if (error && !data) {
@@ -99,7 +106,7 @@ export default function AnalyticsPage({ refreshTrigger }) {
           variants={staggerContainer}
           initial="initial"
           animate="animate"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
         >
           {/* Total Produced */}
           <KPICard
@@ -174,6 +181,9 @@ export default function AnalyticsPage({ refreshTrigger }) {
         description="Daily green hydrogen output (kg/day) benchmarked against plant capacity baseline"
         period={period}
         onPeriodChange={setPeriod}
+        hasData={targetVsActualChart.length > 0}
+        emptyTitle="No production target comparisons available"
+        emptyDescription="There are no data points available for the selected cycle."
       >
         <div className="h-72 w-full mt-2">
           <ResponsiveContainer width="100%" height="100%">
