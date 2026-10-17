@@ -74,33 +74,33 @@ export default function LoginPage() {
         
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex w-11 h-11 border border-teal-600 bg-teal-50 items-center justify-center text-teal-700 rounded-[3px] mb-3 shadow-2xs">
-            <Droplets className="w-5 h-5 fill-teal-600 text-teal-600" />
+          <div className="inline-flex w-11 h-11 border border-teal-600 dark:border-teal-500 bg-teal-50 dark:bg-teal-950/60 items-center justify-center text-teal-700 dark:text-teal-400 rounded-[3px] mb-3 shadow-2xs">
+            <Droplets className="w-5 h-5 fill-teal-600 text-teal-600 dark:fill-teal-400 dark:text-teal-400" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center justify-center space-x-1.5">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight flex items-center justify-center space-x-1.5">
             <span>HydroTrack</span>
-            <span className="text-[10px] font-mono uppercase bg-gray-100 text-gray-600 border border-gray-200 px-1.5 py-0.2 rounded-[2px] font-semibold">
+            <span className="text-[10px] font-mono uppercase bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 px-1.5 py-0.2 rounded-[2px] font-semibold">
               v1.0
             </span>
           </h1>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
             Green Hydrogen Production & Sustainability System
           </p>
         </div>
 
         {/* Auth Card */}
-        <div className="bg-white border border-gray-200 rounded-[3px] p-6 sm:p-8 shadow-sm">
-          <div className="mb-5 pb-3 border-b border-gray-100">
-            <h2 className="text-base font-bold text-gray-900">Sign in to your account</h2>
-            <p className="text-xs text-gray-500 mt-1">
+        <div className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-6 sm:p-8 shadow-sm transition-colors">
+          <div className="mb-5 pb-3 border-b border-gray-100 dark:border-slate-800">
+            <h2 className="text-base font-bold text-gray-900 dark:text-white">Sign in to your account</h2>
+            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
               Enter your credentials to access live plant telemetry and monitoring.
             </p>
           </div>
 
           {/* Error Alert */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 border-l-4 border-l-red-600 rounded-[2px] flex items-center space-x-2 text-xs text-red-800">
-              <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 border-l-4 border-l-red-600 rounded-[2px] flex items-center space-x-2 text-xs text-red-800 dark:text-red-300">
+              <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
@@ -108,7 +108,7 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div>
-              <label className="block text-gray-700 font-semibold mb-1">
+              <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                 Email address *
               </label>
               <input
@@ -118,19 +118,19 @@ export default function LoginPage() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="operator@hydrotrack.com"
-                className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-2 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+                className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 transition-colors"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-gray-700 font-semibold">
+                <label className="block text-gray-700 dark:text-slate-300 font-semibold">
                   Password *
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-[11px] text-gray-500 hover:text-teal-700 flex items-center space-x-1 transition-colors"
+                  className="text-[11px] text-gray-500 dark:text-slate-400 hover:text-teal-700 dark:hover:text-teal-400 flex items-center space-x-1 transition-colors"
                 >
                   {showPassword ? (
                     <>
@@ -152,7 +152,7 @@ export default function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-2 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono transition-colors"
               />
             </div>
 
@@ -162,7 +162,7 @@ export default function LoginPage() {
                 whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 bg-gray-900 hover:bg-black text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs flex items-center justify-center space-x-1.5"
+                className="w-full py-2.5 bg-gray-900 hover:bg-black dark:bg-teal-600 dark:hover:bg-teal-700 text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs flex items-center justify-center space-x-1.5"
               >
                 {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                 <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
@@ -172,41 +172,41 @@ export default function LoginPage() {
           </form>
 
           {/* Quick Demo Credentials Box for Viva */}
-          <div className="mt-5 p-3.5 bg-gray-50 border border-gray-200 rounded-[2px] space-y-2">
-            <span className="text-[11px] font-bold text-gray-700 block uppercase font-mono tracking-wider">
+          <div className="mt-5 p-3.5 bg-gray-50 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-800 rounded-[2px] space-y-2">
+            <span className="text-[11px] font-bold text-gray-700 dark:text-slate-300 block uppercase font-mono tracking-wider">
               One-Click Demo Credentials (Viva / Demo):
             </span>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => handleFillDemo('admin@hydrotrack.com', 'Admin@123')}
-                className="p-2 bg-white border border-gray-200 hover:border-gray-900 rounded-[2px] text-left text-[11px] space-y-0.5 transition-colors group"
+                className="p-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-gray-900 dark:hover:border-slate-500 rounded-[2px] text-left text-[11px] space-y-0.5 transition-colors group"
               >
-                <div className="font-bold text-gray-900 flex items-center space-x-1 group-hover:text-teal-700">
-                  <ShieldCheck className="w-3 h-3 text-teal-600" />
+                <div className="font-bold text-gray-900 dark:text-white flex items-center space-x-1 group-hover:text-teal-700 dark:group-hover:text-teal-400">
+                  <ShieldCheck className="w-3 h-3 text-teal-600 dark:text-teal-400" />
                   <span>Demo Admin</span>
                 </div>
-                <div className="text-[10px] text-gray-400 font-mono">admin@hydrotrack.com</div>
+                <div className="text-[10px] text-gray-400 dark:text-slate-400 font-mono">admin@hydrotrack.com</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleFillDemo('operator@hydrotrack.com', 'Operator@123')}
-                className="p-2 bg-white border border-gray-200 hover:border-gray-900 rounded-[2px] text-left text-[11px] space-y-0.5 transition-colors group"
+                className="p-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-gray-900 dark:hover:border-slate-500 rounded-[2px] text-left text-[11px] space-y-0.5 transition-colors group"
               >
-                <div className="font-bold text-gray-900 flex items-center space-x-1 group-hover:text-teal-700">
-                  <HardHat className="w-3 h-3 text-teal-600" />
+                <div className="font-bold text-gray-900 dark:text-white flex items-center space-x-1 group-hover:text-teal-700 dark:group-hover:text-teal-400">
+                  <HardHat className="w-3 h-3 text-teal-600 dark:text-teal-400" />
                   <span>Demo Operator</span>
                 </div>
-                <div className="text-[10px] text-gray-400 font-mono">operator@hydrotrack.com</div>
+                <div className="text-[10px] text-gray-400 dark:text-slate-400 font-mono">operator@hydrotrack.com</div>
               </button>
             </div>
           </div>
 
           {/* Footer Link */}
-          <div className="mt-5 pt-4 border-t border-gray-100 text-center text-xs text-gray-500">
+          <div className="mt-5 pt-4 border-t border-gray-100 dark:border-slate-800 text-center text-xs text-gray-500 dark:text-slate-400">
             Need an operator account?{' '}
-            <Link to="/signup" className="text-teal-700 font-bold hover:underline">
+            <Link to="/signup" className="text-teal-700 dark:text-teal-400 font-bold hover:underline">
               Create an account
             </Link>
           </div>

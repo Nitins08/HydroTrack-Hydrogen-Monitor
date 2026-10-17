@@ -112,25 +112,25 @@ export default function AddReadingModal({
             initial="initial"
             animate="animate"
             exit="exit"
-            className="relative w-full max-w-2xl bg-white border border-gray-200 rounded-[3px] p-6 text-gray-900 my-8 shadow-xl z-10"
+            className="relative w-full max-w-2xl bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-6 text-gray-900 dark:text-white my-8 shadow-xl z-10 transition-colors"
           >
             {/* Header */}
-            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
+            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100 dark:border-slate-800">
               <div>
-                <h3 className="text-base font-bold text-gray-900 flex items-center space-x-2">
+                <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center space-x-2">
                   <span>{isEditMode ? 'Edit Daily Reading' : 'Add Daily Reading'}</span>
-                  <span className="text-[10px] font-normal uppercase font-mono px-2 py-0.5 rounded-[2px] bg-teal-50 border border-teal-200 text-teal-800">
+                  <span className="text-[10px] font-normal uppercase font-mono px-2 py-0.5 rounded-[2px] bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300">
                     Simulated Operational Log
                   </span>
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
                   Record plant telemetry for production, resources, and operating expenditures.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-700 transition-colors p-1"
+                className="text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300 transition-colors p-1"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -138,15 +138,15 @@ export default function AddReadingModal({
 
             {/* Notification alert */}
             {error && (
-              <div className="mt-4 p-3 bg-red-50 border border-red-200 border-l-4 border-l-red-600 rounded-[2px] flex items-center space-x-2 text-xs text-red-800">
-                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+              <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 border-l-4 border-l-red-600 rounded-[2px] flex items-center space-x-2 text-xs text-red-800 dark:text-red-300">
+                <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
             {success && (
-              <div className="mt-4 p-3 bg-teal-50 border border-teal-200 border-l-4 border-l-teal-600 rounded-[2px] flex items-center space-x-2 text-xs text-teal-800">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 flex-shrink-0" />
+              <div className="mt-4 p-3 bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 border-l-4 border-l-teal-600 rounded-[2px] flex items-center space-x-2 text-xs text-teal-800 dark:text-teal-300">
+                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0" />
                 <span>{success}</span>
               </div>
             )}
@@ -157,7 +157,7 @@ export default function AddReadingModal({
                 
                 {/* 1. Date */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Date *
                   </label>
                   <input
@@ -166,13 +166,13 @@ export default function AddReadingModal({
                     required
                     value={formData.date}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600"
                   />
                 </div>
 
                 {/* 2. Target Production */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Target Production (kg) *
                   </label>
                   <input
@@ -182,13 +182,13 @@ export default function AddReadingModal({
                     required
                     value={formData.targetProduction}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
                 {/* 3. Hydrogen Produced */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Hydrogen Produced (kg) *
                   </label>
                   <input
@@ -198,13 +198,13 @@ export default function AddReadingModal({
                     required
                     value={formData.hydrogenProduced}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
                 {/* 4. Hydrogen Consumed */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Hydrogen Consumed (kg) *
                   </label>
                   <input
@@ -214,13 +214,13 @@ export default function AddReadingModal({
                     required
                     value={formData.hydrogenConsumed}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
                 {/* 5. Energy Consumed */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Total Energy Consumed (MWh) *
                   </label>
                   <input
@@ -230,13 +230,13 @@ export default function AddReadingModal({
                     required
                     value={formData.energyConsumed}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
                 {/* 6. Renewable Energy */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Renewable Energy (MWh) *
                   </label>
                   <input
@@ -246,13 +246,13 @@ export default function AddReadingModal({
                     required
                     value={formData.renewableEnergy}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
                 {/* 7. Water Consumed */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Water Consumed (Liters) *
                   </label>
                   <input
@@ -261,13 +261,13 @@ export default function AddReadingModal({
                     required
                     value={formData.waterConsumed}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
                 {/* 8. CO2 Emissions */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     CO₂ Emissions (kg CO₂) *
                   </label>
                   <input
@@ -276,13 +276,13 @@ export default function AddReadingModal({
                     required
                     value={formData.co2Emissions}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
                 {/* 9. Electricity Cost */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Electricity Cost (₹) *
                   </label>
                   <input
@@ -291,13 +291,13 @@ export default function AddReadingModal({
                     required
                     value={formData.electricityCost}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
                 {/* 10. Water Cost */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Water Cost (₹) *
                   </label>
                   <input
@@ -306,13 +306,13 @@ export default function AddReadingModal({
                     required
                     value={formData.waterCost}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
                 {/* 11. Maintenance Cost */}
                 <div className="sm:col-span-2">
-                  <label className="block text-gray-700 font-semibold mb-1">
+                  <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
                     Maintenance Cost (₹) *
                   </label>
                   <input
@@ -321,19 +321,19 @@ export default function AddReadingModal({
                     required
                     value={formData.maintenanceCost}
                     onChange={handleChange}
-                    className="w-full bg-white border border-gray-300 rounded-[2px] px-3 py-1.5 text-gray-900 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:border-teal-600 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-600 font-mono"
                   />
                 </div>
 
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-3 border-t border-gray-100 flex items-center justify-end space-x-2.5">
+              <div className="pt-3 border-t border-gray-100 dark:border-slate-800 flex items-center justify-end space-x-2.5">
                 <button
                   type="button"
                   onClick={onClose}
                   disabled={loading}
-                  className="px-4 py-1.5 bg-white border border-gray-300 hover:border-gray-900 text-gray-800 rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50"
+                  className="px-4 py-1.5 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:border-gray-900 dark:hover:border-slate-500 text-gray-800 dark:text-slate-200 rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>

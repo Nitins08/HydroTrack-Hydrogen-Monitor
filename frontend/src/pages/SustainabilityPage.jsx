@@ -28,9 +28,11 @@ import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
 import { SkeletonKPIGrid, SkeletonChart } from '../components/SkeletonLoader';
 import AnimatedCounter from '../components/AnimatedCounter';
+import { useTheme } from '../context/ThemeContext';
 import { pageVariants, staggerContainer, cardVariants } from '../utils/animations';
 
 export default function SustainabilityPage({ refreshTrigger }) {
+  const { isDark } = useTheme();
   const shouldReduceMotion = useReducedMotion();
   const [period, setPeriod] = useState('30d');
   const [data, setData] = useState(null);
@@ -86,23 +88,23 @@ export default function SustainabilityPage({ refreshTrigger }) {
       className="space-y-6"
     >
       {/* 1. Page Header with Period Filter */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-gray-200">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-gray-200 dark:border-slate-800">
         <div>
           <div className="flex items-center space-x-2">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
               Sustainability & Environmental Performance
             </h1>
-            <span className="hidden sm:inline-flex items-center space-x-1 px-2 py-0.5 rounded-[2px] bg-teal-50 border border-teal-200 text-teal-800 text-[10px] font-semibold font-mono">
+            <span className="hidden sm:inline-flex items-center space-x-1 px-2 py-0.5 rounded-[2px] bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300 text-[10px] font-semibold font-mono">
               <Leaf className="w-2.5 h-2.5" />
               <span>ESG Tier 1</span>
             </span>
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
             Decarbonization intensity, renewable electricity proportion, and water stewardship
           </p>
         </div>
 
-        <div className="flex items-center space-x-1 self-start sm:self-auto bg-gray-50 p-0.5 border border-gray-200 rounded-[3px]">
+        <div className="flex items-center space-x-1 self-start sm:self-auto bg-gray-50 dark:bg-slate-900 p-0.5 border border-gray-200 dark:border-slate-800 rounded-[3px]">
           {[
             { id: '7d', label: 'Last 7 Days' },
             { id: '30d', label: 'Last 30 Days' },
@@ -117,8 +119,8 @@ export default function SustainabilityPage({ refreshTrigger }) {
                 onClick={() => setPeriod(tab.id)}
                 className={`px-3 py-1 text-xs font-semibold rounded-[2px] transition-colors ${
                   isActive
-                    ? 'bg-gray-900 text-white shadow-xs'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-white'
+                    ? 'bg-gray-900 dark:bg-teal-600 text-white shadow-xs'
+                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800'
                 }`}
               >
                 {tab.label}
@@ -139,31 +141,31 @@ export default function SustainabilityPage({ refreshTrigger }) {
         <motion.div
           variants={cardVariants}
           whileHover={shouldReduceMotion ? {} : { y: -2 }}
-          className="bg-white border border-gray-200 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex flex-col justify-between shadow-2xs hover:shadow-xs transition-all"
+          className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex flex-col justify-between shadow-2xs hover:shadow-xs transition-all"
         >
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-wide">
+              <span className="text-xs font-bold text-gray-600 dark:text-slate-400 uppercase tracking-wide">
                 Renewable Energy Share
               </span>
-              <div className="w-7 h-7 rounded-[2px] bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-700">
+              <div className="w-7 h-7 rounded-[2px] bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-400">
                 <Wind className="w-3.5 h-3.5" />
               </div>
             </div>
 
             <div className="my-2.5 flex items-baseline space-x-1">
-              <span className="text-2xl font-bold font-mono text-gray-900">
+              <span className="text-2xl font-bold font-mono text-gray-900 dark:text-white">
                 <AnimatedCounter value={summary.renewablePercentage ?? 0} decimals={1} />
               </span>
-              <span className="text-xs text-gray-500 font-semibold">%</span>
-              <span className="text-[11px] text-teal-700 font-semibold ml-2 font-mono">
+              <span className="text-xs text-gray-500 dark:text-slate-400 font-semibold">%</span>
+              <span className="text-[11px] text-teal-700 dark:text-teal-400 font-semibold ml-2 font-mono">
                 Target ≥60%
               </span>
             </div>
           </div>
 
-          <div className="pt-2.5 border-t border-gray-100 text-[11px] text-gray-500 leading-relaxed">
-            <strong className="text-gray-800">Why it matters:</strong> Green hydrogen qualifies only when electrolysis is powered by non-fossil renewable electricity (solar, wind, hydro).
+          <div className="pt-2.5 border-t border-gray-100 dark:border-slate-800 text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
+            <strong className="text-gray-800 dark:text-slate-200">Why it matters:</strong> Green hydrogen qualifies only when electrolysis is powered by non-fossil renewable electricity (solar, wind, hydro).
           </div>
         </motion.div>
 
@@ -171,31 +173,31 @@ export default function SustainabilityPage({ refreshTrigger }) {
         <motion.div
           variants={cardVariants}
           whileHover={shouldReduceMotion ? {} : { y: -2 }}
-          className="bg-white border border-gray-200 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex flex-col justify-between shadow-2xs hover:shadow-xs transition-all"
+          className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex flex-col justify-between shadow-2xs hover:shadow-xs transition-all"
         >
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-wide">
+              <span className="text-xs font-bold text-gray-600 dark:text-slate-400 uppercase tracking-wide">
                 Carbon Intensity
               </span>
-              <div className="w-7 h-7 rounded-[2px] bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-700">
+              <div className="w-7 h-7 rounded-[2px] bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-400">
                 <Leaf className="w-3.5 h-3.5" />
               </div>
             </div>
 
             <div className="my-2.5 flex items-baseline space-x-1">
-              <span className="text-2xl font-bold font-mono text-gray-900">
+              <span className="text-2xl font-bold font-mono text-gray-900 dark:text-white">
                 <AnimatedCounter value={summary.co2PerKg ?? 0} decimals={2} />
               </span>
-              <span className="text-xs text-gray-500 font-semibold">kg CO₂ / kg H₂</span>
-              <span className="text-[11px] text-teal-700 font-semibold ml-2 font-mono">
+              <span className="text-xs text-gray-500 dark:text-slate-400 font-semibold">kg CO₂ / kg H₂</span>
+              <span className="text-[11px] text-teal-700 dark:text-teal-400 font-semibold ml-2 font-mono">
                 Limit ≤0.8
               </span>
             </div>
           </div>
 
-          <div className="pt-2.5 border-t border-gray-100 text-[11px] text-gray-500 leading-relaxed">
-            <strong className="text-gray-800">Why it matters:</strong> Minimizing indirect grid emissions ensures the facility achieves true net-zero lifecycle carbon intensity.
+          <div className="pt-2.5 border-t border-gray-100 dark:border-slate-800 text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
+            <strong className="text-gray-800 dark:text-slate-200">Why it matters:</strong> Minimizing indirect grid emissions ensures the facility achieves true net-zero lifecycle carbon intensity.
           </div>
         </motion.div>
 
@@ -203,31 +205,31 @@ export default function SustainabilityPage({ refreshTrigger }) {
         <motion.div
           variants={cardVariants}
           whileHover={shouldReduceMotion ? {} : { y: -2 }}
-          className="bg-white border border-gray-200 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex flex-col justify-between shadow-2xs hover:shadow-xs transition-all"
+          className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex flex-col justify-between shadow-2xs hover:shadow-xs transition-all"
         >
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-wide">
+              <span className="text-xs font-bold text-gray-600 dark:text-slate-400 uppercase tracking-wide">
                 Water Stewardship
               </span>
-              <div className="w-7 h-7 rounded-[2px] bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-700">
+              <div className="w-7 h-7 rounded-[2px] bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-400">
                 <CloudRain className="w-3.5 h-3.5" />
               </div>
             </div>
 
             <div className="my-2.5 flex items-baseline space-x-1">
-              <span className="text-2xl font-bold font-mono text-gray-900">
+              <span className="text-2xl font-bold font-mono text-gray-900 dark:text-white">
                 <AnimatedCounter value={summary.waterPerKg ?? 0} decimals={1} />
               </span>
-              <span className="text-xs text-gray-500 font-semibold">Liters / kg H₂</span>
-              <span className="text-[11px] text-teal-700 font-semibold ml-2 font-mono">
+              <span className="text-xs text-gray-500 dark:text-slate-400 font-semibold">Liters / kg H₂</span>
+              <span className="text-[11px] text-teal-700 dark:text-teal-400 font-semibold ml-2 font-mono">
                 Standard ~9 L
               </span>
             </div>
           </div>
 
-          <div className="pt-2.5 border-t border-gray-100 text-[11px] text-gray-500 leading-relaxed">
-            <strong className="text-gray-800">Why it matters:</strong> Stoichiometric splitting requires 9 kg of pure demineralized water per kg of H₂, plus auxiliary cooling allowances.
+          <div className="pt-2.5 border-t border-gray-100 dark:border-slate-800 text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
+            <strong className="text-gray-800 dark:text-slate-200">Why it matters:</strong> Stoichiometric splitting requires 9 kg of pure demineralized water per kg of H₂, plus auxiliary cooling allowances.
           </div>
         </motion.div>
       </motion.div>
@@ -235,9 +237,9 @@ export default function SustainabilityPage({ refreshTrigger }) {
       {/* 3. Circular Sustainability Score Gauge & 4-Pillar Breakdown */}
       <motion.div 
         variants={cardVariants}
-        className="bg-white border border-gray-200 rounded-[3px] p-5 sm:p-6 space-y-6 shadow-2xs hover:border-gray-300 transition-colors"
+        className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-5 sm:p-6 space-y-6 shadow-2xs hover:border-gray-300 dark:hover:border-slate-700 transition-colors"
       >
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pb-5 border-b border-gray-100">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pb-5 border-b border-gray-100 dark:border-slate-800">
           
           {/* Left: Gauge Circle */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6">
@@ -248,7 +250,7 @@ export default function SustainabilityPage({ refreshTrigger }) {
                   cx="60"
                   cy="60"
                   r={radius}
-                  stroke="#E2E8F0"
+                  stroke={isDark ? '#334155' : '#E2E8F0'}
                   strokeWidth="8"
                   fill="transparent"
                 />
@@ -270,35 +272,35 @@ export default function SustainabilityPage({ refreshTrigger }) {
 
               {/* Centered Score Label */}
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span className="text-2xl font-bold font-mono text-gray-900 leading-none">
+                <span className="text-2xl font-bold font-mono text-gray-900 dark:text-white leading-none">
                   <AnimatedCounter value={totalScore} decimals={0} />
                 </span>
-                <span className="text-[10px] font-semibold text-gray-400 mt-1 uppercase">/ 100 PTS</span>
+                <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-500 mt-1 uppercase">/ 100 PTS</span>
               </div>
             </div>
 
             {/* Gauge Context Details */}
             <div className="space-y-1.5">
-              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-[2px] bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold uppercase font-mono">
-                <Award className="w-3.5 h-3.5 text-teal-600" />
+              <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-[2px] bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300 text-xs font-bold uppercase font-mono">
+                <Award className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                 <span>Eco-Certified Green Standard</span>
               </div>
-              <h2 className="text-base font-bold text-gray-900">
+              <h2 className="text-base font-bold text-gray-900 dark:text-white">
                 Overall Sustainability Score
               </h2>
-              <p className="text-xs text-gray-500 max-w-md leading-relaxed">
+              <p className="text-xs text-gray-500 dark:text-slate-400 max-w-md leading-relaxed">
                 Aggregated deterministic ESG rating evaluated across renewable electricity share (40 pts), carbon emissions intensity (30 pts), water ratio (15 pts), and plant yield (15 pts).
               </p>
             </div>
           </div>
 
           {/* Right Summary Pill */}
-          <div className="w-full lg:w-auto p-3.5 bg-gray-50 border border-gray-200 rounded-[2px] text-xs space-y-1 font-mono text-right hidden sm:block">
-            <span className="text-gray-500 block text-[11px]">Cumulative CO₂ Avoided</span>
-            <span className="text-base font-bold text-teal-700 block">
+          <div className="w-full lg:w-auto p-3.5 bg-gray-50 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-800 rounded-[2px] text-xs space-y-1 font-mono text-right hidden sm:block">
+            <span className="text-gray-500 dark:text-slate-400 block text-[11px]">Cumulative CO₂ Avoided</span>
+            <span className="text-base font-bold text-teal-700 dark:text-teal-400 block">
               ~{Math.round((summary.totalHydrogenProduced ?? 1000) * 8.5).toLocaleString()} kg CO₂
             </span>
-            <span className="text-[10px] text-gray-400 block">Compared to fossil steam methane reforming</span>
+            <span className="text-[10px] text-gray-400 dark:text-slate-500 block">Compared to fossil steam methane reforming</span>
           </div>
         </div>
 
@@ -310,17 +312,17 @@ export default function SustainabilityPage({ refreshTrigger }) {
             return (
               <div 
                 key={idx} 
-                className="p-3.5 bg-gray-50 border border-gray-200 rounded-[2px] space-y-2 hover:border-gray-300 transition-colors"
+                className="p-3.5 bg-gray-50 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-800 rounded-[2px] space-y-2 hover:border-gray-300 dark:hover:border-slate-700 transition-colors"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-gray-900">{pillar.title}</span>
-                  <span className="text-xs font-mono font-bold text-teal-700">
+                  <span className="text-xs font-bold text-gray-900 dark:text-white">{pillar.title}</span>
+                  <span className="text-xs font-mono font-bold text-teal-700 dark:text-teal-400">
                     {pillar.points} / {pillar.maxPoints} pts
                   </span>
                 </div>
 
                 {/* Animated Progress Bar */}
-                <div className="w-full bg-gray-200 h-2 rounded-[2px] overflow-hidden border border-gray-300">
+                <div className="w-full bg-gray-200 dark:bg-slate-800 h-2 rounded-[2px] overflow-hidden border border-gray-300 dark:border-slate-700">
                   <motion.div
                     initial={shouldReduceMotion ? { width: `${pct}%` } : { width: 0 }}
                     animate={{ width: `${pct}%` }}
@@ -329,11 +331,11 @@ export default function SustainabilityPage({ refreshTrigger }) {
                   />
                 </div>
 
-                <div className="text-[11px] text-gray-500 font-mono">
-                  Current: <strong className="text-gray-900">{pillar.currentMetric}</strong>
+                <div className="text-[11px] text-gray-500 dark:text-slate-400 font-mono">
+                  Current: <strong className="text-gray-900 dark:text-white">{pillar.currentMetric}</strong>
                 </div>
 
-                <p className="text-[11px] text-gray-500 leading-relaxed">
+                <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
                   {pillar.description}
                 </p>
               </div>
@@ -341,9 +343,9 @@ export default function SustainabilityPage({ refreshTrigger }) {
           })}
         </div>
 
-        <div className="pt-2 text-[11px] text-gray-400 font-mono border-t border-gray-100 flex items-center justify-between flex-wrap gap-2">
+        <div className="pt-2 text-[11px] text-gray-400 dark:text-slate-500 font-mono border-t border-gray-100 dark:border-slate-800 flex items-center justify-between flex-wrap gap-2">
           <span>Project-specific evaluation model calibrated for academic viva demonstration.</span>
-          <span className="text-teal-700 font-semibold">Simulated Operational Data</span>
+          <span className="text-teal-700 dark:text-teal-400 font-semibold">Simulated Operational Data</span>
         </div>
       </motion.div>
 
@@ -358,35 +360,35 @@ export default function SustainabilityPage({ refreshTrigger }) {
         <div className="h-72 w-full mt-2">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="2 2" stroke="#F1F5F9" vertical={false} />
+              <CartesianGrid strokeDasharray="2 2" stroke={isDark ? '#334155' : '#F1F5F9'} vertical={false} />
               <XAxis 
                 dataKey="date" 
-                stroke="#64748B" 
-                tick={{ fill: '#64748B', fontSize: 11 }} 
+                stroke={isDark ? '#94A3B8' : '#64748B'} 
+                tick={{ fill: isDark ? '#94A3B8' : '#64748B', fontSize: 11 }} 
                 tickLine={false}
               />
               <YAxis 
                 domain={[0, 100]} 
-                stroke="#64748B" 
-                tick={{ fill: '#64748B', fontSize: 11 }} 
+                stroke={isDark ? '#94A3B8' : '#64748B'} 
+                tick={{ fill: isDark ? '#94A3B8' : '#64748B', fontSize: 11 }} 
                 tickLine={false}
               />
               <Tooltip 
                 isAnimationActive={false}
                 animationDuration={0}
                 animationEasing="linear"
-                cursor={{ stroke: '#64748B', strokeWidth: 1, strokeDasharray: '2 2' }}
+                cursor={{ stroke: isDark ? '#64748B' : '#64748B', strokeWidth: 1, strokeDasharray: '2 2' }}
                 content={<ChartTooltip unit="%" />}
               />
-              <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
+              <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px', color: isDark ? '#CBD5E1' : '#111827' }} />
               <Area 
                 type="monotone" 
                 dataKey="renewablePercentage" 
                 name="Renewable Share (%)" 
                 stroke="#0d9488" 
                 strokeWidth={2} 
-                fill="#0d9488" 
-                fillOpacity={0.12} 
+                fill={isDark ? '#0f766e' : '#0d9488'} 
+                fillOpacity={isDark ? 0.25 : 0.12} 
                 isAnimationActive={!shouldReduceMotion}
                 animationDuration={900}
               />
