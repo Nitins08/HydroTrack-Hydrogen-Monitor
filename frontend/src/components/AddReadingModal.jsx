@@ -112,25 +112,25 @@ export default function AddReadingModal({
             initial="initial"
             animate="animate"
             exit="exit"
-            className="relative w-full max-w-2xl bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-6 text-gray-900 dark:text-white my-8 shadow-xl z-10 transition-colors"
+            className="relative w-full max-w-2xl bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[3px] p-6 text-[#171A1C] dark:text-[#F7F5F0] my-8 shadow-xl z-10 transition-colors"
           >
             {/* Header */}
-            <div className="flex items-center justify-between pb-3.5 border-b border-gray-100 dark:border-slate-800">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[#ECE9E2] dark:border-[#252B30]">
               <div>
-                <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center space-x-2">
+                <h3 className="text-base font-bold text-[#171A1C] dark:text-[#F7F5F0] flex items-center space-x-2">
                   <span>{isEditMode ? 'Edit Daily Reading' : 'Add Daily Reading'}</span>
-                  <span className="text-[10px] font-normal uppercase font-mono px-2 py-0.5 rounded-[2px] bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300">
+                  <span className="text-[10px] font-normal uppercase font-mono px-2 py-0.5 rounded-[2px] bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-300">
                     Simulated Operational Log
                   </span>
                 </h3>
-                <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-[#606870] dark:text-[#8E97A0] mt-0.5">
                   Record plant telemetry for production, resources, and operating expenditures.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300 transition-colors p-1"
+                className="text-[#606870] dark:text-[#8E97A0] hover:text-[#171A1C] dark:hover:text-[#F7F5F0] transition-colors p-1"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -328,12 +328,12 @@ export default function AddReadingModal({
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-3 border-t border-gray-100 dark:border-slate-800 flex items-center justify-end space-x-2.5">
+              <div className="pt-3 border-t border-[#ECE9E2] dark:border-[#252B30] flex items-center justify-end space-x-2.5">
                 <button
                   type="button"
                   onClick={onClose}
                   disabled={loading}
-                  className="px-4 py-1.5 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:border-gray-900 dark:hover:border-slate-500 text-gray-800 dark:text-slate-200 rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50"
+                  className="px-4 py-1.5 bg-white dark:bg-[#252B30] border border-[#E5E2DA] dark:border-[#2C333A] hover:border-gray-900 dark:hover:border-neutral-500 text-[#171A1C] dark:text-[#F7F5F0] rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
@@ -342,7 +342,7 @@ export default function AddReadingModal({
                   whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
                   type="submit"
                   disabled={loading}
-                  className="inline-flex items-center space-x-1.5 px-4 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs"
+                  className="inline-flex items-center space-x-1.5 px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs"
                 >
                   {loading ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />

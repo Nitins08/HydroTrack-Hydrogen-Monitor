@@ -3,23 +3,27 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --color-bg-app: #F8FAFC;
+  --color-bg-app: #F8F7F4;
   --color-bg-card: #FFFFFF;
-  --color-bg-subtle: #F1F5F9;
-  --color-text-main: #0F172A;
-  --color-text-muted: #64748B;
-  --color-border: #E2E8F0;
-  --color-border-subtle: #F1F5F9;
+  --color-bg-subtle: #F2EFE9;
+  --color-text-main: #171A1C;
+  --color-text-muted: #5C646C;
+  --color-border: #E5E2DA;
+  --color-border-subtle: #ECE9E2;
+  --color-amber-primary: #F5A623;
+  --color-amber-hover: #E09618;
 }
 
 .dark {
-  --color-bg-app: #0B0F17;
-  --color-bg-card: #151C28;
-  --color-bg-subtle: #1E293B;
-  --color-text-main: #F8FAFC;
-  --color-text-muted: #94A3B8;
-  --color-border: #243044;
-  --color-border-subtle: #1E293B;
+  --color-bg-app: #131618;
+  --color-bg-card: #1D2226;
+  --color-bg-subtle: #252B30;
+  --color-text-main: #F7F5F0;
+  --color-text-muted: #9AA3AD;
+  --color-border: #2C333A;
+  --color-border-subtle: #242A30;
+  --color-amber-primary: #F5A623;
+  --color-amber-hover: #FFB020;
 }
 
 @layer base {
@@ -48,29 +52,29 @@ html.theme-transitioning *::after {
   transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, fill 200ms ease, stroke 200ms ease !important;
 }
 
-/* Minimal clean scrollbars */
+/* Clean minimal scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F1F5F9;
+  background: #F2EFE9;
 }
 .dark ::-webkit-scrollbar-track {
-  background: #0B0F17;
+  background: #131618;
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #D4D0C6;
   border-radius: 2px;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #2C333A;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #B0ABA0;
 }
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #3D4650;
 }
 
 /* Remove Recharts sliding/gliding tooltip movement completely */
@@ -99,13 +103,11 @@ html.theme-transitioning *::after {
   html.theme-transitioning,
   html.theme-transitioning *,
   html.theme-transitioning *::before,
-  html.theme-transitioning *::after,
-  *,
-  ::before,
-  ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  html.theme-transitioning *::after {
+    transition: none !important;
+  }
+  
+  .custom-chart-tooltip {
+    animation: none !important;
   }
 }

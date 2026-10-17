@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Droplets, Eye, EyeOff, AlertCircle, ArrowRight, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, ArrowRight, Loader2 } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { pageVariants } from '../utils/animations';
+import HydroTrackLogo from '../components/HydroTrackLogo';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -68,26 +69,15 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         
         {/* Brand Header */}
-        <div className="text-center mb-6">
-          <div className="inline-flex w-11 h-11 border border-teal-600 dark:border-teal-500 bg-teal-50 dark:bg-teal-950/60 items-center justify-center text-teal-700 dark:text-teal-400 rounded-[3px] mb-3 shadow-2xs">
-            <Droplets className="w-5 h-5 fill-teal-600 text-teal-600 dark:fill-teal-400 dark:text-teal-400" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight flex items-center justify-center space-x-1.5">
-            <span>HydroTrack</span>
-            <span className="text-[10px] font-mono uppercase bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 px-1.5 py-0.2 rounded-[2px] font-semibold">
-              v1.0
-            </span>
-          </h1>
-          <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
-            Green Hydrogen Production & Sustainability System
-          </p>
+        <div className="flex flex-col items-center justify-center mb-6 text-center">
+          <HydroTrackLogo variant="full" size="lg" />
         </div>
 
         {/* Auth Card */}
-        <div className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-6 sm:p-8 shadow-sm transition-colors">
-          <div className="mb-5 pb-3 border-b border-gray-100 dark:border-slate-800">
-            <h2 className="text-base font-bold text-gray-900 dark:text-white">Sign in to your account</h2>
-            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
+        <div className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[3px] p-6 sm:p-8 shadow-sm transition-colors">
+          <div className="mb-5 pb-3 border-b border-[#ECE9E2] dark:border-[#252B30]">
+            <h2 className="text-base font-bold text-[#171A1C] dark:text-[#F7F5F0]">Sign in to your account</h2>
+            <p className="text-xs text-[#606870] dark:text-[#8E97A0] mt-1">
               Enter your credentials to access live plant telemetry and monitoring.
             </p>
           </div>
@@ -103,7 +93,7 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div>
-              <label className="block text-gray-700 dark:text-slate-300 font-semibold mb-1">
+              <label className="block text-[#171A1C] dark:text-[#F7F5F0] font-semibold mb-1">
                 Email address *
               </label>
               <input
@@ -113,19 +103,19 @@ export default function LoginPage() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="operator@hydrotrack.com"
-                className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 transition-colors"
+                className="w-full bg-[#F8F7F4] dark:bg-[#131618] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[2px] px-3 py-2 text-[#171A1C] dark:text-[#F7F5F0] placeholder-gray-400 dark:placeholder-neutral-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-gray-700 dark:text-slate-300 font-semibold">
+                <label className="block text-[#171A1C] dark:text-[#F7F5F0] font-semibold">
                   Password *
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-[11px] text-gray-500 dark:text-slate-400 hover:text-teal-700 dark:hover:text-teal-400 flex items-center space-x-1 transition-colors"
+                  className="text-[11px] text-[#606870] dark:text-[#8E97A0] hover:text-amber-500 flex items-center space-x-1 transition-colors"
                 >
                   {showPassword ? (
                     <>
@@ -147,7 +137,7 @@ export default function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-[2px] px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 font-mono transition-colors"
+                className="w-full bg-[#F8F7F4] dark:bg-[#131618] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[2px] px-3 py-2 text-[#171A1C] dark:text-[#F7F5F0] placeholder-gray-400 dark:placeholder-neutral-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 font-mono transition-colors"
               />
             </div>
 
@@ -157,7 +147,7 @@ export default function LoginPage() {
                 whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 bg-gray-900 hover:bg-black dark:bg-teal-600 dark:hover:bg-teal-700 text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs flex items-center justify-center space-x-1.5"
+                className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-[2px] text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs flex items-center justify-center space-x-1.5"
               >
                 {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                 <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
@@ -167,9 +157,9 @@ export default function LoginPage() {
           </form>
 
           {/* Footer Link */}
-          <div className="mt-5 pt-4 border-t border-gray-100 dark:border-slate-800 text-center text-xs text-gray-500 dark:text-slate-400">
+          <div className="mt-5 pt-4 border-t border-[#ECE9E2] dark:border-[#252B30] text-center text-xs text-[#606870] dark:text-[#8E97A0]">
             Need an operator account?{' '}
-            <Link to="/signup" className="text-teal-700 dark:text-teal-400 font-bold hover:underline">
+            <Link to="/signup" className="text-amber-500 font-bold hover:underline">
               Create an account
             </Link>
           </div>

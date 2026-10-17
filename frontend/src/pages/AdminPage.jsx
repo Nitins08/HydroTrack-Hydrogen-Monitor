@@ -132,18 +132,18 @@ export default function AdminPage() {
       className="space-y-6"
     >
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-200 dark:border-slate-800 gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-[#E5E2DA] dark:border-[#2C333A] gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-[#171A1C] dark:text-[#F7F5F0] tracking-tight">
             Admin Panel
           </h1>
-          <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-[#606870] dark:text-[#8E97A0] mt-0.5">
             System User Management & Role-Based Access Control (RBAC)
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 text-gray-800 dark:text-slate-200 text-xs font-mono rounded-[2px] shadow-2xs">
-            <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+          <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] text-[#171A1C] dark:text-[#F7F5F0] text-xs font-mono rounded-[2px] shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
             <span>Active Admin: {currentUser?.name}</span>
           </span>
         </div>
@@ -160,18 +160,18 @@ export default function AdminPage() {
         <motion.div
           variants={cardVariants}
           whileHover={shouldReduceMotion ? {} : { y: -2 }}
-          className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex items-center justify-between shadow-2xs hover:border-gray-300 dark:hover:border-slate-700 transition-all"
+          className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] border-l-[3px] border-l-amber-500 rounded-[3px] p-4 flex items-center justify-between shadow-2xs hover:border-gray-300 dark:hover:border-neutral-700 transition-all"
         >
           <div>
-            <span className="text-xs font-bold text-gray-600 dark:text-slate-400 uppercase tracking-wide block">
+            <span className="text-xs font-bold text-[#606870] dark:text-[#8E97A0] uppercase tracking-wide block">
               Total Accounts
             </span>
-            <span className="text-2xl font-bold font-mono text-gray-900 dark:text-white mt-1 block">
+            <span className="text-2xl font-bold font-mono text-[#171A1C] dark:text-[#F7F5F0] mt-1 block">
               <AnimatedCounter value={metrics.totalUsers} decimals={0} />
             </span>
-            <span className="text-[11px] text-gray-400 dark:text-slate-500 mt-0.5 block">Registered platform users</span>
+            <span className="text-[11px] text-[#606870] dark:text-[#8E97A0] mt-0.5 block">Registered platform users</span>
           </div>
-          <div className="w-10 h-10 border border-teal-200 dark:border-teal-800 rounded-[2px] flex items-center justify-center text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50">
+          <div className="w-10 h-10 border border-amber-200 dark:border-amber-800 rounded-[2px] flex items-center justify-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40">
             <Users className="w-5 h-5" />
           </div>
         </motion.div>
@@ -180,18 +180,18 @@ export default function AdminPage() {
         <motion.div
           variants={cardVariants}
           whileHover={shouldReduceMotion ? {} : { y: -2 }}
-          className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex items-center justify-between shadow-2xs hover:border-gray-300 dark:hover:border-slate-700 transition-all"
+          className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] border-l-[3px] border-l-amber-500 rounded-[3px] p-4 flex items-center justify-between shadow-2xs hover:border-gray-300 dark:hover:border-neutral-700 transition-all"
         >
           <div>
-            <span className="text-xs font-bold text-gray-600 dark:text-slate-400 uppercase tracking-wide block">
+            <span className="text-xs font-bold text-[#606870] dark:text-[#8E97A0] uppercase tracking-wide block">
               Administrators
             </span>
-            <span className="text-2xl font-bold font-mono text-gray-900 dark:text-white mt-1 block">
+            <span className="text-2xl font-bold font-mono text-[#171A1C] dark:text-[#F7F5F0] mt-1 block">
               <AnimatedCounter value={metrics.totalAdmins} decimals={0} />
             </span>
-            <span className="text-[11px] text-gray-400 dark:text-slate-500 mt-0.5 block">Full CRUD & permissions</span>
+            <span className="text-[11px] text-[#606870] dark:text-[#8E97A0] mt-0.5 block">Full CRUD & permissions</span>
           </div>
-          <div className="w-10 h-10 border border-teal-200 dark:border-teal-800 rounded-[2px] flex items-center justify-center text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50">
+          <div className="w-10 h-10 border border-amber-200 dark:border-amber-800 rounded-[2px] flex items-center justify-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40">
             <ShieldCheck className="w-5 h-5" />
           </div>
         </motion.div>
@@ -200,45 +200,45 @@ export default function AdminPage() {
         <motion.div
           variants={cardVariants}
           whileHover={shouldReduceMotion ? {} : { y: -2 }}
-          className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 border-l-[3px] border-l-teal-600 rounded-[3px] p-4 flex items-center justify-between shadow-2xs hover:border-gray-300 dark:hover:border-slate-700 transition-all"
+          className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] border-l-[3px] border-l-amber-500 rounded-[3px] p-4 flex items-center justify-between shadow-2xs hover:border-gray-300 dark:hover:border-neutral-700 transition-all"
         >
           <div>
-            <span className="text-xs font-bold text-gray-600 dark:text-slate-400 uppercase tracking-wide block">
+            <span className="text-xs font-bold text-[#606870] dark:text-[#8E97A0] uppercase tracking-wide block">
               Plant Operators
             </span>
-            <span className="text-2xl font-bold font-mono text-gray-900 dark:text-white mt-1 block">
+            <span className="text-2xl font-bold font-mono text-[#171A1C] dark:text-[#F7F5F0] mt-1 block">
               <AnimatedCounter value={metrics.totalOperators} decimals={0} />
             </span>
-            <span className="text-[11px] text-gray-400 dark:text-slate-500 mt-0.5 block">Telemetry logging & review</span>
+            <span className="text-[11px] text-[#606870] dark:text-[#8E97A0] mt-0.5 block">Telemetry logging & review</span>
           </div>
-          <div className="w-10 h-10 border border-teal-200 dark:border-teal-800 rounded-[2px] flex items-center justify-center text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50">
+          <div className="w-10 h-10 border border-amber-200 dark:border-amber-800 rounded-[2px] flex items-center justify-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40">
             <HardHat className="w-5 h-5" />
           </div>
         </motion.div>
       </motion.div>
 
       {/* Permissions Distinction Banner */}
-      <div className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-4 text-xs shadow-2xs space-y-2 transition-colors">
-        <span className="font-bold text-gray-900 dark:text-white uppercase tracking-wide text-[11px] block">
+      <div className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[3px] p-4 text-xs shadow-2xs space-y-2 transition-colors">
+        <span className="font-bold text-[#171A1C] dark:text-[#F7F5F0] uppercase tracking-wide text-[11px] block">
           Role Permissions Overview
         </span>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-600 dark:text-slate-400">
-          <div className="p-3 bg-gray-50 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-800 rounded-[2px] space-y-1">
-            <div className="flex items-center space-x-1.5 font-bold text-gray-900 dark:text-slate-200">
-              <HardHat className="w-3.5 h-3.5 text-teal-700 dark:text-teal-400" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[#606870] dark:text-[#8E97A0]">
+          <div className="p-3 bg-[#F8F7F4] dark:bg-[#131618] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[2px] space-y-1">
+            <div className="flex items-center space-x-1.5 font-bold text-[#171A1C] dark:text-[#F7F5F0]">
+              <HardHat className="w-3.5 h-3.5 text-amber-500" />
               <span>Plant Operator:</span>
             </div>
-            <p className="text-[11px] text-gray-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-[11px] text-[#606870] dark:text-[#8E97A0] leading-relaxed">
               Allowed to monitor Dashboard, Analytics, and Sustainability. Can log new daily telemetry. Can edit <strong>only readings they created</strong>. Cannot delete readings or access the Admin Panel.
             </p>
           </div>
 
-          <div className="p-3 bg-gray-50 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-800 rounded-[2px] space-y-1">
-            <div className="flex items-center space-x-1.5 font-bold text-gray-900 dark:text-slate-200">
-              <ShieldCheck className="w-3.5 h-3.5 text-teal-700 dark:text-teal-400" />
+          <div className="p-3 bg-[#F8F7F4] dark:bg-[#131618] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[2px] space-y-1">
+            <div className="flex items-center space-x-1.5 font-bold text-[#171A1C] dark:text-[#F7F5F0]">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
               <span>System Administrator:</span>
             </div>
-            <p className="text-[11px] text-gray-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-[11px] text-[#606870] dark:text-[#8E97A0] leading-relaxed">
               Unrestricted access. Can edit or permanently delete <strong>any reading</strong>. Access to User Directory, role re-assignments, and operator deletion. Self-account is protected from deletion or demotion.
             </p>
           </div>
@@ -246,15 +246,15 @@ export default function AdminPage() {
       </div>
 
       {/* User Directory Table */}
-      <div className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-4 sm:p-5 space-y-4 hover:border-gray-300 dark:hover:border-slate-700 transition-colors shadow-2xs">
-        <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-slate-800">
+      <div className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[3px] p-4 sm:p-5 space-y-4 hover:border-gray-300 dark:hover:border-neutral-700 transition-colors shadow-2xs">
+        <div className="flex items-center justify-between pb-3 border-b border-[#ECE9E2] dark:border-[#252B30]">
           <div>
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white tracking-tight">System User Directory</h3>
-            <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+            <h3 className="text-sm font-bold text-[#171A1C] dark:text-[#F7F5F0] tracking-tight">System User Directory</h3>
+            <p className="text-xs text-[#606870] dark:text-[#8E97A0] mt-0.5">
               Review platform accounts, toggle permission roles, and manage credentials
             </p>
           </div>
-          <span className="text-xs text-gray-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-2.5 py-0.5 rounded-[2px] font-mono">
+          <span className="text-xs text-[#606870] dark:text-[#8E97A0] bg-[#F8F7F4] dark:bg-[#131618] border border-[#E5E2DA] dark:border-[#2C333A] px-2.5 py-0.5 rounded-[2px] font-mono">
             {users.length} accounts
           </span>
         </div>
@@ -267,9 +267,9 @@ export default function AdminPage() {
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-gray-900 dark:text-slate-200 border-collapse min-w-[620px]">
+            <table className="w-full text-left text-xs text-[#171A1C] dark:text-[#F7F5F0] border-collapse min-w-[620px]">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-slate-800 text-gray-500 dark:text-slate-400 font-semibold bg-gray-50 dark:bg-slate-800/60">
+              <tr className="border-b border-[#E5E2DA] dark:border-[#2C333A] text-[#606870] dark:text-[#8E97A0] font-semibold bg-[#F8F7F4] dark:bg-[#131618]">
                 <th className="py-2.5 px-3">User Details</th>
                 <th className="py-2.5 px-3">Email Address</th>
                 <th className="py-2.5 px-3">Assigned Role</th>
@@ -282,7 +282,7 @@ export default function AdminPage() {
               variants={staggerContainer}
               initial="initial"
               animate="animate"
-              className="divide-y divide-gray-100 dark:divide-slate-800/80"
+              className="divide-y divide-[#ECE9E2] dark:divide-[#252B30]"
             >
               {users.map((targetUser) => {
                 const isSelf = currentUserId && targetUser._id === currentUserId;
@@ -292,19 +292,19 @@ export default function AdminPage() {
                   <motion.tr 
                     key={targetUser._id} 
                     variants={tableRowVariants}
-                    className="hover:bg-teal-50/20 dark:hover:bg-teal-950/20 transition-colors"
+                    className="hover:bg-amber-500/5 dark:hover:bg-amber-500/10 transition-colors"
                   >
                     {/* User Name */}
                     <td className="py-3 px-3">
                       <div className="flex items-center space-x-2.5">
-                        <div className="w-7 h-7 border border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 rounded-[2px] flex items-center justify-center text-xs font-bold text-gray-800 dark:text-slate-200">
+                        <div className="w-7 h-7 border border-[#E5E2DA] dark:border-[#2C333A] bg-[#F8F7F4] dark:bg-[#252B30] rounded-[2px] flex items-center justify-center text-xs font-bold text-[#171A1C] dark:text-[#F7F5F0]">
                           {targetUser.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-bold text-gray-900 dark:text-white flex items-center space-x-1.5">
+                          <div className="font-bold text-[#171A1C] dark:text-[#F7F5F0] flex items-center space-x-1.5">
                             <span>{targetUser.name}</span>
                             {isSelf && (
-                              <span className="text-[10px] bg-gray-900 dark:bg-slate-700 text-white px-1.5 py-0.2 rounded-[2px] font-mono">
+                              <span className="text-[10px] bg-[#171A1C] dark:bg-[#252B30] text-white px-1.5 py-0.2 rounded-[2px] font-mono">
                                 You
                               </span>
                             )}
@@ -314,7 +314,7 @@ export default function AdminPage() {
                     </td>
 
                     {/* Email */}
-                    <td className="py-3 px-3 text-gray-600 dark:text-slate-400 font-mono text-[11px]">
+                    <td className="py-3 px-3 text-[#606870] dark:text-[#8E97A0] font-mono text-[11px]">
                       {targetUser.email}
                     </td>
 
@@ -322,13 +322,13 @@ export default function AdminPage() {
                     <td className="py-3 px-3">
                       <span className={`inline-flex items-center space-x-1 px-2 py-0.5 text-[11px] font-semibold border rounded-[2px] ${
                         targetUser.role === 'admin'
-                          ? 'bg-gray-900 dark:bg-slate-800 text-white border-gray-900 dark:border-slate-700'
-                          : 'bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border-teal-200 dark:border-teal-800'
+                          ? 'bg-[#171A1C] dark:bg-[#252B30] text-white border-[#171A1C] dark:border-[#38414A]'
+                          : 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800'
                       }`}>
                         {targetUser.role === 'admin' ? (
-                          <ShieldCheck className="w-3 h-3" />
+                          <ShieldCheck className="w-3 h-3 text-amber-400" />
                         ) : (
-                          <HardHat className="w-3 h-3 text-teal-700 dark:text-teal-400" />
+                          <HardHat className="w-3 h-3 text-amber-500" />
                         )}
                         <span className="capitalize">{targetUser.role}</span>
                       </span>
@@ -337,7 +337,7 @@ export default function AdminPage() {
                     {/* Role Control Dropdown */}
                     <td className="py-3 px-3">
                       {isSelf ? (
-                        <span className="text-[11px] text-gray-400 dark:text-slate-500 italic flex items-center space-x-1">
+                        <span className="text-[11px] text-[#606870] dark:text-[#8E97A0] italic flex items-center space-x-1">
                           <Lock className="w-3 h-3" />
                           <span>Protected (Active Admin)</span>
                         </span>
@@ -347,25 +347,25 @@ export default function AdminPage() {
                             disabled={isUpdating}
                             value={targetUser.role}
                             onChange={(e) => handleRoleChange(targetUser, e.target.value)}
-                            className="bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 hover:border-gray-900 dark:hover:border-slate-500 text-gray-900 dark:text-white text-xs px-2.5 py-1 rounded-[2px] focus:outline-none focus:border-teal-600 cursor-pointer transition-colors disabled:opacity-50"
+                            className="bg-white dark:bg-[#252B30] border border-[#E5E2DA] dark:border-[#2C333A] hover:border-amber-500 text-[#171A1C] dark:text-[#F7F5F0] text-xs px-2.5 py-1 rounded-[2px] focus:outline-none focus:border-amber-500 cursor-pointer transition-colors disabled:opacity-50"
                           >
                             <option value="operator">Operator</option>
                             <option value="admin">Admin</option>
                           </select>
-                          {isUpdating && <Loader2 className="w-3 h-3 animate-spin text-teal-600 dark:text-teal-400" />}
+                          {isUpdating && <Loader2 className="w-3 h-3 animate-spin text-amber-500" />}
                         </div>
                       )}
                     </td>
 
                     {/* Registered Date */}
-                    <td className="py-3 px-3 text-gray-500 dark:text-slate-400 font-mono text-[11px]">
+                    <td className="py-3 px-3 text-[#606870] dark:text-[#8E97A0] font-mono text-[11px]">
                       {targetUser.createdAt ? formatDate(targetUser.createdAt) : 'N/A'}
                     </td>
 
                     {/* Actions */}
                     <td className="py-3 px-3 text-center">
                       {isSelf ? (
-                        <span className="text-[11px] text-gray-400 dark:text-slate-500 italic">
+                        <span className="text-[11px] text-[#606870] dark:text-[#8E97A0] italic">
                           Self account
                         </span>
                       ) : (

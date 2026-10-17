@@ -2,7 +2,7 @@ import React from 'react';
 
 export function SkeletonKPICard() {
   return (
-    <div className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 border-l-[3px] border-l-gray-300 dark:border-l-slate-700 rounded-[3px] p-4 flex flex-col justify-between h-[116px] animate-pulse">
+    <div className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] border-l-[3px] border-l-gray-300 dark:border-l-slate-700 rounded-[3px] p-4 flex flex-col justify-between h-[116px] animate-pulse">
       <div className="flex items-center justify-between">
         <div className="h-3 bg-gray-200 dark:bg-slate-700 rounded w-28" />
         <div className="w-7 h-7 bg-gray-100 dark:bg-slate-800 rounded-[2px]" />
@@ -30,7 +30,7 @@ export function SkeletonKPIGrid({ count = 4, cols = 'grid-cols-1 sm:grid-cols-2 
 
 export function SkeletonChart({ height = 'h-72' }) {
   return (
-    <div className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-4 sm:p-5 space-y-4 animate-pulse">
+    <div className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[3px] p-4 sm:p-5 space-y-4 animate-pulse">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-gray-100 dark:border-slate-800">
         <div className="space-y-1.5">
           <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-44" />
@@ -54,7 +54,7 @@ export function SkeletonChart({ height = 'h-72' }) {
 
 export function SkeletonTable({ rows = 5 }) {
   return (
-    <div className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-4 sm:p-5 space-y-3.5 animate-pulse">
+    <div className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[3px] p-4 sm:p-5 space-y-3.5 animate-pulse">
       <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-slate-800">
         <div className="space-y-1.5">
           <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-36" />
@@ -76,7 +76,7 @@ export function DashboardSkeleton() {
   return (
     <div className="space-y-6">
       {/* Header Skeleton */}
-      <div className="bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 rounded-[3px] p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-pulse">
+      <div className="bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] rounded-[3px] p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-pulse">
         <div className="space-y-2">
           <div className="h-6 bg-gray-200 dark:bg-slate-700 rounded w-56" />
           <div className="h-3 bg-gray-100 dark:bg-slate-800 rounded w-40" />
@@ -85,7 +85,7 @@ export function DashboardSkeleton() {
       </div>
 
       {/* Alert Skeleton */}
-      <div className="h-11 bg-white dark:bg-[#151C28] border border-gray-200 dark:border-slate-800 border-l-[3px] border-l-gray-300 dark:border-l-slate-700 rounded-[3px] animate-pulse" />
+      <div className="h-11 bg-white dark:bg-[#1D2226] border border-[#E5E2DA] dark:border-[#2C333A] border-l-[3px] border-l-gray-300 dark:border-l-slate-700 rounded-[3px] animate-pulse" />
 
       {/* KPI Cards Skeleton */}
       <SkeletonKPIGrid count={4} />
