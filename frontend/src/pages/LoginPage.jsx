@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Droplets, Eye, EyeOff, AlertCircle, ShieldCheck, HardHat, ArrowRight, Loader2 } from 'lucide-react';
+import { Droplets, Eye, EyeOff, AlertCircle, ArrowRight, Loader2 } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -24,11 +24,6 @@ export default function LoginPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleFillDemo = (email, password) => {
-    setFormData({ email, password });
-    setError(null);
   };
 
   const handleSubmit = async (e) => {
@@ -170,38 +165,6 @@ export default function LoginPage() {
               </motion.button>
             </div>
           </form>
-
-          {/* Quick Demo Credentials Box for Viva */}
-          <div className="mt-5 p-3.5 bg-gray-50 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-800 rounded-[2px] space-y-2">
-            <span className="text-[11px] font-bold text-gray-700 dark:text-slate-300 block uppercase font-mono tracking-wider">
-              One-Click Demo Credentials (Viva / Demo):
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleFillDemo('admin@hydrotrack.com', 'Admin@123')}
-                className="p-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-gray-900 dark:hover:border-slate-500 rounded-[2px] text-left text-[11px] space-y-0.5 transition-colors group"
-              >
-                <div className="font-bold text-gray-900 dark:text-white flex items-center space-x-1 group-hover:text-teal-700 dark:group-hover:text-teal-400">
-                  <ShieldCheck className="w-3 h-3 text-teal-600 dark:text-teal-400" />
-                  <span>Demo Admin</span>
-                </div>
-                <div className="text-[10px] text-gray-400 dark:text-slate-400 font-mono">admin@hydrotrack.com</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleFillDemo('operator@hydrotrack.com', 'Operator@123')}
-                className="p-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-gray-900 dark:hover:border-slate-500 rounded-[2px] text-left text-[11px] space-y-0.5 transition-colors group"
-              >
-                <div className="font-bold text-gray-900 dark:text-white flex items-center space-x-1 group-hover:text-teal-700 dark:group-hover:text-teal-400">
-                  <HardHat className="w-3 h-3 text-teal-600 dark:text-teal-400" />
-                  <span>Demo Operator</span>
-                </div>
-                <div className="text-[10px] text-gray-400 dark:text-slate-400 font-mono">operator@hydrotrack.com</div>
-              </button>
-            </div>
-          </div>
 
           {/* Footer Link */}
           <div className="mt-5 pt-4 border-t border-gray-100 dark:border-slate-800 text-center text-xs text-gray-500 dark:text-slate-400">
